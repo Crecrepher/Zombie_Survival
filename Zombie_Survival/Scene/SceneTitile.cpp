@@ -20,9 +20,18 @@ SceneTitile::~SceneTitile()
 
 void SceneTitile::Init()
 {
+	Release();
+
+	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
+	sf::Vector2f centerPos = windowSize * 0.5f;
+
+	worldView.setSize(windowSize);
+	worldView.setCenter(centerPos);
+	uiView.setSize(windowSize);
+	uiView.setCenter(centerPos);
 	//계속써도되는거 add
 	Release();
-	AddGo(new SpriteGo("Icon"));
+	AddGo(new SpriteGo("graphics/icon.png","Icon"));
 	AddGo(new TextGo("Text"));
 	AddGo(new SoundGo("Start"));
 	AddGo(new SoundGo("MoveSound"));
@@ -47,7 +56,6 @@ void SceneTitile::Enter()
 {
 	Scene::Enter();
 	SpriteGo* findSGo = (SpriteGo*)FindGo("Icon");
-	findSGo->sprite.setTexture(*RESOURCE_MGR.GetTexture("graphics/icon.png"));
 	findSGo->SetOrigin(Origins::MC);
 	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2.f, FRAMEWORK.GetWindowSize().y / 3.f);
 	findSGo->sortLayer = 1;

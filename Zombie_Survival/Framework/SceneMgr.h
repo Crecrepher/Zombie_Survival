@@ -36,6 +36,8 @@ public:
 	bool TimeBaseFliper() const;
 	void BgmOn();
 	void BgmOff();
+
+	Scene* GetCurrScene()const;
 };
 
 #define SCENE_MGR (SceneMgr::Instance())

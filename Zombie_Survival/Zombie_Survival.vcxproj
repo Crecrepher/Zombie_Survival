@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameObject\Bullet.cpp" />
     <ClCompile Include="GameObject\BlockGo.cpp" />
     <ClCompile Include="GameObject\FloatRectGo.cpp" />
     <ClCompile Include="GameObject\BouncyBall.cpp" />
@@ -200,9 +201,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Universial\Variables.cpp" />
-    <ClCompile Include="VertexArrayGo.cpp" />
+    <ClCompile Include="GameObject\VertexArrayGo.cpp" />
+    <ClCompile Include="GameObject\Zombie.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameObject\Bullet.h" />
     <ClInclude Include="GameObject\BlockGo.h" />
     <ClInclude Include="GameObject\FloatRectGo.h" />
     <ClInclude Include="GameObject\BouncyBall.h" />
@@ -241,7 +244,8 @@
     <ClInclude Include="Universial\stdafx.h" />
     <ClInclude Include="Universial\Utils.h" />
     <ClInclude Include="Universial\Variables.h" />
-    <ClInclude Include="VertexArrayGo.h" />
+    <ClInclude Include="GameObject\VertexArrayGo.h" />
+    <ClInclude Include="GameObject\Zombie.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

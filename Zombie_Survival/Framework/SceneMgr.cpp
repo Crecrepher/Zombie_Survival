@@ -101,3 +101,8 @@ void SceneMgr::BgmOff()
 {
 	bgm.sound.stop();
 }
+
+Scene* SceneMgr::GetCurrScene() const
+{
+	return currentScene;
+}

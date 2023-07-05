@@ -4,11 +4,16 @@ class Player :public SpriteGo
 {
 protected:
 	sf::Vector2f direction;
-	sf::Vector2f position;
 	sf::Vector2f look;
 	float speed;
+
+	sf::Vector2f mapTop;
+	sf::Vector2f mapBot;
 public:
 	Player(const std::string id = "",const std::string n = "");
+
+	virtual void SetPosition(float x, float y)override;
+	virtual void SetPosition(const sf::Vector2f& p)override;
 
 	virtual void Init()override;
 	virtual void Reset()override;

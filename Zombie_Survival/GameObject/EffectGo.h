@@ -11,7 +11,7 @@ protected:
 	float timer;
 	bool isFire;
 public:
-	EffectGo(const std::string& n = "");
+	EffectGo(const std::string& id,const std::string& n = "");
 	~EffectGo();
 
 	void Fire(sf::Vector2f v);

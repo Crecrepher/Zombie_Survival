@@ -27,10 +27,18 @@ void SceneMenu::Init()
 {
 	Release();
 	
-	AddGo(new EffectGo("Icon"));
-	AddGo(new SpriteGo("Menu1"));
-	AddGo(new SpriteGo("Menu2"));
-	AddGo(new SpriteGo("Menu3"));
+	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
+	sf::Vector2f centerPos = windowSize * 0.5f;
+
+	worldView.setSize(windowSize);
+	worldView.setCenter(centerPos);
+	uiView.setSize(windowSize);
+	uiView.setCenter(centerPos);
+
+	AddGo(new EffectGo("graphics/icon.png","Icon"));
+	AddGo(new SpriteGo("graphics/b1.png","Menu1"));
+	AddGo(new SpriteGo("graphics/b2.png","Menu2"));
+	AddGo(new SpriteGo("graphics/b3.png","Menu3"));
 	AddGo(new RectGo("MenuSelector"));
 	AddGo(new SoundGo("MoveSound"));
 	AddGo(new SoundGo("SelectSound"));
@@ -53,15 +61,14 @@ void SceneMenu::Release()
 
 void SceneMenu::Enter()
 {
+	menuIndex = 0;
 	Scene::Enter();
 	EffectGo* findEGo = (EffectGo*)FindGo("Icon");
-	findEGo->sprite.setTexture(*RESOURCE_MGR.GetTexture("graphics/icon.png"));
 	findEGo->SetOrigin(Origins::MC);
 	findEGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2.f, FRAMEWORK.GetWindowSize().y / 3.f);
 	findEGo->sortLayer = 1;
 
 	SpriteGo* findSGo = (SpriteGo*)FindGo("Menu3");
-	findSGo->sprite.setTexture(*RESOURCE_MGR.GetTexture("graphics/b3.png"));
 	findSGo->SetOrigin(Origins::MC);
 	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x *0.75f,
 		FRAMEWORK.GetWindowSize().y*0.8f);
@@ -69,7 +76,6 @@ void SceneMenu::Enter()
 	findSGo->sortLayer = 3;
 
 	findSGo = (SpriteGo*)FindGo("Menu2");
-	findSGo->sprite.setTexture(*RESOURCE_MGR.GetTexture("graphics/b2.png"));
 	findSGo->SetOrigin(Origins::MC);
 	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x * 0.5f,
 		FRAMEWORK.GetWindowSize().y * 0.8f);
@@ -77,7 +83,6 @@ void SceneMenu::Enter()
 	findSGo->sortLayer = 3;
 
 	findSGo = (SpriteGo*)FindGo("Menu1");
-	findSGo->sprite.setTexture(*RESOURCE_MGR.GetTexture("graphics/b1.png"));
 	findSGo->SetOrigin(Origins::MC);
 	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x * 0.25f,
 		FRAMEWORK.GetWindowSize().y * 0.8f);
@@ -183,4 +188,5 @@ void SceneMenu::Draw(sf::RenderWindow& window)
 	{
 		window.close();
 	}
+	window.setMouseCursorVisible(true);
 }
