@@ -33,7 +33,6 @@ void Framework::Release()
 
 void Framework::Update(float dt)
 {
-
     SCENE_MGR.Update(dt);
 }
 
@@ -65,7 +64,6 @@ void Framework::Run()
 
         Update(dt);
         window.clear();
-        //window.draw(shape);
         Draw();
         window.display();
     }

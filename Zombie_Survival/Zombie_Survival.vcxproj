@@ -153,21 +153,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameObject\Bullet.cpp" />
-    <ClCompile Include="GameObject\BlockGo.cpp" />
-    <ClCompile Include="GameObject\FloatRectGo.cpp" />
-    <ClCompile Include="GameObject\BouncyBall.cpp" />
-    <ClCompile Include="GameObject\CirGo.cpp" />
     <ClCompile Include="GameObject\EffectGo.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="GameObject\MovingBgObj.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GameObject\RectGo.cpp" />
     <ClCompile Include="GameObject\SoundGo.cpp" />
     <ClCompile Include="GameObject\TextGo.cpp" />
-    <ClCompile Include="GameObject\PFUnitGo.cpp" />
-    <ClCompile Include="GameObject\LadderGo.cpp" />
     <ClCompile Include="GameObject\Player.cpp" />
     <ClCompile Include="Scene\SceneDev1.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -206,17 +197,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject\Bullet.h" />
-    <ClInclude Include="GameObject\BlockGo.h" />
-    <ClInclude Include="GameObject\FloatRectGo.h" />
-    <ClInclude Include="GameObject\BouncyBall.h" />
-    <ClInclude Include="GameObject\CirGo.h" />
     <ClInclude Include="GameObject\EffectGo.h" />
-    <ClInclude Include="GameObject\MovingBgObj.h" />
     <ClInclude Include="GameObject\RectGo.h" />
     <ClInclude Include="GameObject\SoundGo.h" />
     <ClInclude Include="GameObject\TextGo.h" />
-    <ClInclude Include="GameObject\PFUnitGo.h" />
-    <ClInclude Include="GameObject\LadderGo.h" />
     <ClInclude Include="GameObject\Player.h" />
     <ClInclude Include="Scene\SceneDev1.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>

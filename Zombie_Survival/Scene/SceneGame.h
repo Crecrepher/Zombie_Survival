@@ -1,6 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "BlockGo.h"
 #include "EffectGo.h"
 #include <sstream>
 class SceneGame : public Scene

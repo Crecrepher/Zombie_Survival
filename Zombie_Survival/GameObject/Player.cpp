@@ -7,7 +7,12 @@
 #include "Bullet.h"
 #include "Zombie.h"
 #include <math.h>
-Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(200.f)
+
+Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(200.f), hp(100)
+{
+}
+
+Player::~Player()
 {
 }
 
@@ -25,17 +30,12 @@ void Player::Init()
 {
 	SpriteGo::Init();
 	SetOrigin(Origins::MC);
-	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(SCENE_MGR.GetCurrScene());
-	if (sceneDev1 != nullptr)
-	{
-		mapTop = sceneDev1->GetMapTop();
-		mapBot = sceneDev1->GetMapBot();
-	}
 }
 
 void Player::Reset()
 {
 	SpriteGo::Reset();
+	hp = 100;
 }
 
 void Player::Release()
@@ -59,14 +59,17 @@ void Player::Update(float dt)
 	direction.x = INPUT_MGR.GetAxisRaw(Axis::Horizontal);
 	direction.y = INPUT_MGR.GetAxisRaw(Axis::Vertical);
 
-	if (position.x < mapTop.x || position.x > mapBot.x )
+	if ((position.x < mapTop.x && direction.x == -1) ||
+		(position.x > mapBot.x && direction.x == 1))
 	{
 		direction.x = 0;
 	}
-	if (position.y < mapTop.y || position.y > mapBot.y)
+	if ((position.y < mapTop.y && direction.y == -1) ||
+		(position.y > mapBot.y && direction.y == 1))
 	{
 		direction.y = 0;
 	}
+
 	position += direction * speed * dt;
 
 	SetPosition(position);
@@ -92,4 +95,25 @@ void Player::Update(float dt)
 void Player::Draw(sf::RenderWindow& window)
 {
 	SpriteGo::Draw(window);
+}
+
+void Player::SetMapInfo()
+{
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+	if (sceneDev1 != nullptr)
+	{
+		mapTop = sceneDev1->GetMapTop();
+		mapBot = sceneDev1->GetMapBot();
+	}
+}
+
+void Player::Ouch(float dt)
+{
+	hp -= dt * 100;
+}
+
+float Player::GetHp()
+{
+	return hp;
 }

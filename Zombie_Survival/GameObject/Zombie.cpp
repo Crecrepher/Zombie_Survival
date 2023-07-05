@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "SceneMgr.h"
 #include "SceneDev1.h"
+
 const std::string Zombie::textureIds[3] = {
 		"graphics/bloater.png",
 		"graphics/chaser.png",
@@ -56,6 +57,11 @@ void Zombie::Update(float dt)
 	{
 		position += direction * speed * dt;
 		SetPosition(position);
+	}
+
+	if (player->sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()))
+	{
+		player->Ouch(dt);
 	}
 }
 

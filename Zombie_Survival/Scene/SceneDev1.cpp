@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "Zombie.h"
 #include "VertexArrayGo.h"
+#include "RectGo.h"
 
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr)
 {
@@ -47,11 +48,12 @@ void SceneDev1::Init()
 	player = (Player*)AddGo(new Player("graphics/player.png", "Player"));
 	AddGo(new SpriteGo("graphics/crosshair.png", "Crosshair"));
 	CreateZombies(1000);
+
+	AddGo(new RectGo("Hp"));
 	for (auto go : gameObjects)
 	{
 		go->Init();
 	}
-
 }
 
 void SceneDev1::Release()
@@ -71,6 +73,17 @@ void SceneDev1::Enter()
 
 	SpriteGo* cursor = (SpriteGo*)FindGo("Crosshair");
 	cursor->SetOrigin(Origins::MC);
+
+	RectGo* hp = (RectGo*)FindGo("Hp");
+	hp->SetOrigin(Origins::ML);
+	hp->SetPosition(FRAMEWORK.GetWindowSize().x * 0.25f,
+		FRAMEWORK.GetWindowSize().y * 0.9f);
+	hp->sortLayer = 100;
+	hp->rectangle.setFillColor(sf::Color::Red);
+	player->SetMapInfo();
+	player->Reset();
+	ClearZombies();
+
 }
 
 void SceneDev1::Exit()
@@ -81,6 +94,10 @@ void SceneDev1::Exit()
 
 void SceneDev1::Update(float dt)
 {
+	if (player->GetHp() <=0)
+	{
+		Enter();
+	}
 	Scene::Update(dt);
 	SpriteGo* cursor = (SpriteGo*)FindGo("Crosshair");
 	cursor->SetPosition(SCENE_MGR.GetCurrScene()->ScreenToWorldPos(INPUT_MGR.GetMousePos()));
@@ -92,7 +109,7 @@ void SceneDev1::Update(float dt)
 	}
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	{
-		SpawnZombies(10, player->GetPosition(), 700.f);
+		SpawnZombies(10, player->GetPosition(), 1000.f);
 	}
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
 	{
@@ -101,8 +118,12 @@ void SceneDev1::Update(float dt)
 
 	if (zombies.empty())
 	{
-		SpawnZombies(10, player->GetPosition(), 700.f);
+		SpawnZombies(10, player->GetPosition(), 1000.f);
 	}
+
+	RectGo* hp = (RectGo*)FindGo("Hp");
+	hp->SetSize({ player->GetHp()*3,30.f });
+	
 }
 
 void SceneDev1::Draw(sf::RenderWindow& window)
@@ -197,8 +218,9 @@ void SceneDev1::SpawnZombies(int count, sf::Vector2f center, float radius)
 		{
 			pos = center + Utils::RandomInCircle(radius);
 		}
-		while (Utils::Distance(center, pos) < 200.f && radius > 100.f);
-
+		while (Utils::Distance(center, pos) < 700.f && radius > 100.f ||
+			!InTheMap(pos));
+		 
 		zombie->SetPosition(pos);
 
 		zombies.push_back(zombie);
@@ -243,5 +265,16 @@ sf::Vector2f SceneDev1::GetMapBot()
 	VertexArrayGo* background = (VertexArrayGo*)FindGo("Background");
 	sf::FloatRect back = background->vertexArray.getBounds();
 	return{ back.left + back.width - tilesize.x,back.top + back.height - tilesize.y };
+}
+
+bool SceneDev1::InTheMap(sf::Vector2f position)
+{
+	sf::Vector2f mapTop = GetMapTop();
+	sf::Vector2f mapBot = GetMapBot();
+
+	return  position.x > mapTop.x &&
+		position.x < mapBot.x &&
+		position.y > mapTop.y &&
+		position.y < mapBot.y;
 }
 

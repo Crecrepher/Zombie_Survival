@@ -1,6 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "BlockGo.h"
 #include "EffectGo.h"
 #include <sstream>
 
@@ -41,5 +40,6 @@ public:
 	std::list<Zombie*>* GetZombieList();
 	sf::Vector2f GetMapTop();
 	sf::Vector2f GetMapBot();
+	bool InTheMap(sf::Vector2f position);
 };
 
