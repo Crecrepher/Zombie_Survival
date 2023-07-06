@@ -10,6 +10,7 @@
 #include "Zombie.h"
 #include "VertexArrayGo.h"
 #include "RectGo.h"
+#include "Blood.h"
 
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr)
 {
@@ -21,18 +22,21 @@ SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr)
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/crawler.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/bullet.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/crosshair.png"));
+	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/blood.png"));
 }
 
 SceneDev1::~SceneDev1()
 {
+	//Release();
 }
 
 void SceneDev1::Init()
 {
 	Release();
+
+	// Ä«¸Þ¶ó
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
-
 	worldView.setSize(windowSize);
 
 	uiView.setSize(windowSize);
@@ -56,9 +60,26 @@ void SceneDev1::Init()
 
 	player = (Player*)AddGo(new Player("graphics/player.png", "Player"));
 	player->SetWallBounds(wallBounds);
-	CreateZombies(1000);
-
+	//CreateZombies(1000);
+	AddGo(zombiePool.Get());
 	AddGo(new RectGo("Hp"));
+
+	
+	zombiePool.OnCreate = [this](Zombie* zombie) {
+		Zombie::Types zombieType = (Zombie::Types)Utils::RandomRange(0,(int) Zombie::Types::Crawler);
+		zombie->SetType(zombieType);
+		zombie->SetPlayer(player);
+	};
+	zombiePool.Init();
+
+	ObjectPool<Blood>* ptr = &bloodPool;
+	bloodPool.OnCreate = [this,ptr](Blood* blood) {
+		blood->textureId = "graphics/blood.png";
+		blood->pool = *ptr;
+	};
+	bloodPool.Init();
+	
+
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -68,6 +89,8 @@ void SceneDev1::Init()
 
 void SceneDev1::Release()
 {
+	bloodPool.Release();
+	zombiePool.Release();
 	for (auto go : gameObjects)
 	{
 		delete go;
@@ -77,19 +100,17 @@ void SceneDev1::Release()
 void SceneDev1::Enter()
 {
 	Scene::Enter();
-	
+	ClearZombies();
+	ClearBloods();
+
 	worldView.setCenter(0.f, 0.f);
 	player->SetPosition(0.f,0.f);
-
-	player->GetMap();
 	player->Reset();
-	ClearZombies();
-	
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetOrigin(Origins::ML);
 	hp->rectangle.setFillColor(sf::Color::Red);
-	hp->SetPosition(FRAMEWORK.GetWindowSize().x * 0.25, FRAMEWORK.GetWindowSize().y * 0.9);
+	hp->SetPosition(FRAMEWORK.GetWindowSize().x * 0.25f, FRAMEWORK.GetWindowSize().y * 0.9f);
 	hp->sortLayer = 100;
 
 	isGameOver = false;
@@ -98,6 +119,8 @@ void SceneDev1::Enter()
 void SceneDev1::Exit()
 {
 	ClearZombies();
+	player->Reset();
+
 	Scene::Exit();
 }
 
@@ -124,18 +147,18 @@ void SceneDev1::Update(float dt)
 		ClearZombies();
 	}
 
-	if (zombies.empty())
+	if (zombiePool.GetUseList().size() == 0)
 	{
 		SpawnZombies(10, player->GetPosition(), 1000.f);
 	}
 
-	if (player->GetHp() <= 0)
-	{
-		Enter();
-	}
+	//if (player->GetHp() <= 0)
+	//{
+	//	Enter();
+	//}
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
-	hp->SetSize({ player->GetHp() * 3, 30.f });
+	hp->SetSize({ player->GetHp() * 3.f, 30.f });
 }
 
 void SceneDev1::Draw(sf::RenderWindow& window)
@@ -196,66 +219,59 @@ VertexArrayGo* SceneDev1::CreateBackground(sf::Vector2f size, sf::Vector2f tileS
 	return background;
 }
 
-void SceneDev1::CreateZombies(int count)
-{
-	for (int i = 0; i < count; i++)
-	{
-		Zombie* zombie = new Zombie();
-		Zombie::Types zombieType = (Zombie::Types)Utils::RandomRange(0, Zombie::TotalTypes-1);
-		zombie->SetType(zombieType);
-		zombie->SetPlayer(player);
-		zombie->Init();
-		zombie->SetActive(false);
-		zombiePool.push_back(zombie);
-	}
-}
-
 void SceneDev1::SpawnZombies(int count, sf::Vector2f center, float radius)
 {
+	sf::Vector2f wallBoundsLT = { wallBounds.left,wallBounds.top };
+	sf::Vector2f wallBoundsRB = { wallBounds.left + wallBounds.width,wallBounds.top + wallBounds.height };
 	for (int i = 0; i < count; ++i)
 	{
-		if (zombiePool.empty())
-		{
-			CreateZombies(count);
-		}
-
-		Zombie* zombie = zombiePool.front();
-		zombiePool.pop_front();
-
-		zombie->SetActive(true);
-
+		Zombie* zombie = zombiePool.Get();
 		sf::Vector2f pos;
 		do
 		{
 			pos = center + Utils::RandomInCircle(radius);
+			if (!wallBounds.contains(pos))
+			{
+				pos = Utils::Clamp(pos, wallBoundsLT, wallBoundsRB);
+			}
 		}
-		while ((Utils::Distance(center, pos) < 700.f && radius > 100.f)|| !IsInMap(pos));
-
+		while ((Utils::Distance(center, pos) < 700.f && radius > 100.f));
+	
 		zombie->SetPosition(pos);
-
-		zombies.push_back(zombie);
-
-		zombie->Reset();
 		AddGo(zombie);
 	}
 }
 
 void SceneDev1::ClearZombies()
 {
-	for (auto zombie : zombies)
+	for (auto zombie : zombiePool.GetUseList())
 	{
-		zombie->SetActive(false);
 		RemoveGo(zombie);
-		zombiePool.push_back(zombie);
 	}
-	zombies.clear();
+	zombiePool.Clear();
+}
+
+void SceneDev1::ClearBloods()
+{
+	for (auto blood : bloodPool.GetUseList())
+	{
+		RemoveGo(blood);
+	}
+	bloodPool.Clear();
 }
 
 void SceneDev1::OnDieZombie(Zombie* zombie)
 {
-	zombies.remove(zombie);
-	zombie->SetActive(false);
-	zombiePool.push_back(zombie);
+	Blood* blood = bloodPool.Get();
+	AddGo(blood);
+	blood->SetPosition(zombie->GetPosition());
+	float bloodsize = 0.5 + (1.0-((int)zombie->GetType() * 0.5));
+	float rot = Utils::RandomRange(0, 270);
+	blood->SetSize(bloodsize, bloodsize);
+	blood->sprite.setRotation(rot);
+
+	RemoveGo(zombie);
+	zombiePool.Return(zombie);
 }
 
 void SceneDev1::OnDiePlayer()
@@ -263,29 +279,7 @@ void SceneDev1::OnDiePlayer()
 	isGameOver = true;
 }
 
-std::list<Zombie*>* SceneDev1::GetZombieList()
+const std::list<Zombie*>* SceneDev1::GetZombieList()
 {
-	return &zombies;
+	return &zombiePool.GetUseList();
 }
-
-sf::Vector2f SceneDev1::GetMapTop()
-{
-	VertexArrayGo* background = (VertexArrayGo*)FindGo("Background");
-	sf::FloatRect back = background->vertexArray.getBounds();
-	return { back.left + tilesize.x, back.top + tilesize.y };
-}
-
-sf::Vector2f SceneDev1::GetMapBot()
-{
-	VertexArrayGo* background = (VertexArrayGo*)FindGo("Background");
-	sf::FloatRect back = background->vertexArray.getBounds();
-	return{ back.left + back.width - tilesize.x,back.top + back.height - tilesize.y };
-}
-
-bool SceneDev1::IsInMap(sf::Vector2f pos)
-{
-	sf::Vector2f top = GetMapTop();
-	sf::Vector2f bot = GetMapBot();
-	return (top.x < pos.x && top.y<pos.y&&bot.x>pos.x &&bot.y>pos.y);
-}
-

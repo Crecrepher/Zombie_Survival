@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <tuple>
 #include <math.h>
+#include <functional>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>

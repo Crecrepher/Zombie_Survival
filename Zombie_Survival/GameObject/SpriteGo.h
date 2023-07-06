@@ -3,10 +3,10 @@
 class SpriteGo : public GameObject
 {
 protected: 
-	std::string textureId;
+	
 public:
 	sf::Sprite sprite;
-	
+	std::string textureId;
 
 	SpriteGo(const std::string id = "", const std::string n = "",
 		sf::Vector2f spriteDir = sf::Vector2f(-1, -1));

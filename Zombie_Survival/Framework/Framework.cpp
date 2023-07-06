@@ -2,6 +2,7 @@
 #include "Framework.h"
 #include "InputMgr.h"
 #include "SceneMgr.h"
+#include "Scene.h"
 #include "ResourceMgr.h"
 
 Framework::Framework(int w, int h, const std::string& t)
@@ -70,19 +71,27 @@ void Framework::Run()
             switch (event.type)
             {
             case sf::Event::Closed:
+                SCENE_MGR.GetCurrScene()->Exit();
                 window.close();
+     
+                break;
             case sf::Event::GainedFocus:
                 window.setMouseCursor(cursor);
+                break;
             }
 
             INPUT_MGR.Update(event);
         }
 
-        Update(dt);
-        window.clear();
-        //window.draw(shape);
-        Draw();
-        window.display();
+        if (window.isOpen())
+		{
+			Update(dt);
+			window.clear();
+
+			Draw();
+			window.display();
+        }
+       
     }
     Release();
 }

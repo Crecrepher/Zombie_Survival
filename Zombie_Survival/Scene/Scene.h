@@ -11,7 +11,10 @@ protected:
 	SceneId sceneId;
 
 	std::vector<std::tuple<ResourceTypes, std::string>> resources;
+
 	std::list<GameObject*> gameObjects;
+	std::list<GameObject*> removeGameObjects;
+
 	std::list<GameObject*> uiObjects;
 
 	sf::View worldView;
@@ -21,7 +24,7 @@ protected:
 
 public:
 	Scene(SceneId id = SceneId::None);
-	virtual ~Scene();
+	virtual ~Scene() = 0;
 
 	GameObject* FindGo(const std::string& name);
 	void FindGos(std::list<GameObject*> list, const std::string& name);
@@ -39,7 +42,7 @@ public:
 	sf::Vector2f uiPosToScreen(sf::Vector2f uiPos);
 
 	virtual void Init() = 0;
-	virtual void Release() {}
+	virtual void Release() = 0;
 
 	virtual void Enter();
 	virtual void Exit();

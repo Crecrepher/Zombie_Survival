@@ -19,7 +19,7 @@ protected:
 	SceneId startSceneId = SceneId::Dev1;
 
 	float timer = 0.f;
-	bool timeFlip;
+	bool timeFlip = false;
 
 	SoundGo bgm;
 	bool bgmPlay = false;
