@@ -24,6 +24,8 @@ public:
 
 	static void SetOrigin(sf::Transformable& obj, Origins origin, const sf::FloatRect& rect);
 
+	static float Clamp(float v, float min, float max);
+	static sf::Vector2f Clamp(const sf::Vector2f& v, const sf::Vector2f& min, const sf::Vector2f& max);
 	// Vector2
 	static float SqrMagnitude(const sf::Vector2f& vec);
 	static float Magnitude(const sf::Vector2f& vec);

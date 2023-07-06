@@ -47,6 +47,16 @@ void Framework::Run()
     Init(screenWidth, screenHeight,title);
 
     clock.restart();
+
+    sf::Image cursorImg;
+    cursorImg.loadFromFile("graphics/crosshair.png");
+
+    sf::Cursor cursor;
+    if (cursor.loadFromPixels(cursorImg.getPixelsPtr(), cursorImg.getSize(), { cursorImg.getSize().x / 2, cursorImg.getSize().y / 2 }))
+    {
+        FRAMEWORK.GetWindow().setMouseCursor(cursor);
+    }
+
     while (window.isOpen())
     {
         sf::Time deltaTime = clock.restart();
@@ -57,8 +67,13 @@ void Framework::Run()
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            switch (event.type)
+            {
+            case sf::Event::Closed:
                 window.close();
+            case sf::Event::GainedFocus:
+                window.setMouseCursor(cursor);
+            }
 
             INPUT_MGR.Update(event);
         }

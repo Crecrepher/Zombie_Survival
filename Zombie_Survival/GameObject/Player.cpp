@@ -6,6 +6,7 @@
 #include "SceneDev1.h"
 #include "Bullet.h"
 #include "Zombie.h"
+
 #include <math.h>
 Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(200.f)
 {
@@ -25,17 +26,14 @@ void Player::Init()
 {
 	SpriteGo::Init();
 	SetOrigin(Origins::MC);
-	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(SCENE_MGR.GetCurrScene());
-	if (sceneDev1 != nullptr)
-	{
-		mapTop = sceneDev1->GetMapTop();
-		mapBot = sceneDev1->GetMapBot();
-	}
+	
+
 }
 
 void Player::Reset()
 {
 	SpriteGo::Reset();
+	hp = 100;
 }
 
 void Player::Release()
@@ -58,18 +56,21 @@ void Player::Update(float dt)
 	//이동
 	direction.x = INPUT_MGR.GetAxisRaw(Axis::Horizontal);
 	direction.y = INPUT_MGR.GetAxisRaw(Axis::Vertical);
-
-	if (position.x < mapTop.x || position.x > mapBot.x )
-	{
-		direction.x = 0;
-	}
-	if (position.y < mapTop.y || position.y > mapBot.y)
-	{
-		direction.y = 0;
-	}
+	//if ((position.x < mapTop.x && direction.x <0 )|| (position.x > mapBot.x && mapTop.x && direction.x > 0))
+	//{
+	//	direction.x = 0;
+	//}
+	//if ((position.y < mapTop.y && direction.y < 0)|| (position.y > mapBot.y && direction.y > 0))
+	//{
+	//	direction.y = 0;
+	//}
 	position += direction * speed * dt;
-
+	if (!wallBounds.contains(position))
+	{
+		position = Utils::Clamp(position,wallBoundsLT,wallBoundsRB);
+	}
 	SetPosition(position);
+
 
 	//발사
 	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
@@ -87,9 +88,50 @@ void Player::Update(float dt)
 			sceneDev1->AddGo(bullet);
 		}
 	}
+	if (invincibility > 0)
+	{
+		invincibility -= (dt * 100);
+	}
+	else
+	{
+		sprite.setColor(sf::Color::White);
+	}
 }
 
 void Player::Draw(sf::RenderWindow& window)
 {
 	SpriteGo::Draw(window);
+}
+
+void Player::SetWallBounds(const sf::FloatRect& bounds)
+{
+	wallBounds = bounds;
+
+	wallBoundsLT = { wallBounds.left,wallBounds.top };
+	wallBoundsRB = { wallBounds.left + wallBounds.width,wallBounds.top + wallBounds.height };
+}
+
+void Player::GetMap()
+{
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(SCENE_MGR.GetCurrScene());
+	if (sceneDev1 != nullptr)
+	{
+		mapTop = sceneDev1->GetMapTop();
+		mapBot = sceneDev1->GetMapBot();
+	}
+}
+
+void Player::Ouch(float dt)
+{
+	if (invincibility <=0)
+	{
+		hp -= 5;
+		invincibility = 25;
+		sprite.setColor(sf::Color::Color(205, 12, 34));
+	}
+}
+
+float Player::GetHp()
+{
+	return hp;
 }

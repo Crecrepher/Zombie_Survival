@@ -1,12 +1,12 @@
 #pragma once
 #include "Scene.h"
 #include "BlockGo.h"
-#include "EffectGo.h"
 #include <sstream>
 
 class Player;
 class VertexArrayGo;
 class Zombie;
+class SpriteGo;
 
 class SceneDev1 : public Scene
 {
@@ -16,6 +16,7 @@ protected:
 	std::list<Zombie*> zombiePool;
 	std::list<Zombie*> zombies;
 	sf::Vector2f tilesize = { 50.f,50.f };
+	sf::FloatRect wallBounds;
 
 public:
 	SceneDev1();
@@ -41,5 +42,6 @@ public:
 	std::list<Zombie*>* GetZombieList();
 	sf::Vector2f GetMapTop();
 	sf::Vector2f GetMapBot();
+	bool IsInMap(sf::Vector2f pos);
 };
 

@@ -57,6 +57,11 @@ void Zombie::Update(float dt)
 		position += direction * speed * dt;
 		SetPosition(position);
 	}
+
+	if (sprite.getGlobalBounds().intersects(player->sprite.getGlobalBounds()))
+	{
+		player->Ouch(dt);
+	}
 }
 
 void Zombie::Draw(sf::RenderWindow& window)

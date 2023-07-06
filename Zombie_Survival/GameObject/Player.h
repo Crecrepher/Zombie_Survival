@@ -6,9 +6,15 @@ protected:
 	sf::Vector2f direction;
 	sf::Vector2f look;
 	float speed;
-
+	float hp = 100;
+	float invincibility = 0;
 	sf::Vector2f mapTop;
 	sf::Vector2f mapBot;
+
+	sf::FloatRect wallBounds;
+	sf::Vector2f wallBoundsLT;
+	sf::Vector2f wallBoundsRB;
+
 public:
 	Player(const std::string id = "",const std::string n = "");
 
@@ -21,5 +27,11 @@ public:
 
 	virtual void Update(float dt)override;
 	virtual void Draw(sf::RenderWindow& window)override;
+	
+	void SetWallBounds(const sf::FloatRect& bounds);
+
+	void GetMap();
+	void Ouch(float dt);
+	float GetHp();
 };
 

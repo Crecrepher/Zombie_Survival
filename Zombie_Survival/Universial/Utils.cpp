@@ -57,6 +57,16 @@ void Utils::SetOrigin(sf::Transformable& obj, Origins origin, const sf::FloatRec
 	obj.setOrigin(originPos);
 }
 
+float Utils::Clamp(float v, float min, float max)
+{
+	return std::max(min, std::min(max, v));
+}
+
+sf::Vector2f Utils::Clamp(const sf::Vector2f& v, const sf::Vector2f& min, const sf::Vector2f& max)
+{
+	return { std::max(min.x, std::min(max.x, v.x)) ,std::max(min.y, std::min(max.y, v.y)) };
+}
+
 
 float Utils::SqrMagnitude(const sf::Vector2f& vec)
 {
