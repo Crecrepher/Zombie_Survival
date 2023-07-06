@@ -120,7 +120,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./SFML-2.5.1/include;./;./Framework;./Scene;./Universial;./GameObject;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./SFML-2.5.1/include;./;./Framework;./Scene;./Universial;./GameObject;./GameObject/ZSObject;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
@@ -152,14 +152,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameObject\Bullet.cpp" />
+    <ClCompile Include="GameObject\ZSObject\Blood.cpp" />
+    <ClCompile Include="GameObject\ZSObject\Bullet.cpp" />
+    <ClCompile Include="GameObject\CirGo.cpp" />
     <ClCompile Include="GameObject\EffectGo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="GameObject\RectGo.cpp" />
     <ClCompile Include="GameObject\SoundGo.cpp" />
     <ClCompile Include="GameObject\TextGo.cpp" />
-    <ClCompile Include="GameObject\Player.cpp" />
+    <ClCompile Include="GameObject\ZSObject\Player.cpp" />
     <ClCompile Include="Scene\SceneDev1.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -193,15 +195,18 @@
     </ClCompile>
     <ClCompile Include="Universial\Variables.cpp" />
     <ClCompile Include="GameObject\VertexArrayGo.cpp" />
-    <ClCompile Include="GameObject\Zombie.cpp" />
+    <ClCompile Include="GameObject\ZSObject\Zombie.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameObject\Bullet.h" />
+    <ClInclude Include="GameObject\ZSObject\Blood.h" />
+    <ClInclude Include="Universial\ObjectPool.h" />
+    <ClInclude Include="GameObject\ZSObject\Bullet.h" />
+    <ClInclude Include="GameObject\CirGo.h" />
     <ClInclude Include="GameObject\EffectGo.h" />
     <ClInclude Include="GameObject\RectGo.h" />
     <ClInclude Include="GameObject\SoundGo.h" />
     <ClInclude Include="GameObject\TextGo.h" />
-    <ClInclude Include="GameObject\Player.h" />
+    <ClInclude Include="GameObject\ZSObject\Player.h" />
     <ClInclude Include="Scene\SceneDev1.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
@@ -229,7 +234,7 @@
     <ClInclude Include="Universial\Utils.h" />
     <ClInclude Include="Universial\Variables.h" />
     <ClInclude Include="GameObject\VertexArrayGo.h" />
-    <ClInclude Include="GameObject\Zombie.h" />
+    <ClInclude Include="GameObject\ZSObject\Zombie.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

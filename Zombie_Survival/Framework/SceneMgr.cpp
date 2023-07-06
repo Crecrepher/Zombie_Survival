@@ -11,7 +11,7 @@
 
 void SceneMgr::ChangeScene(SceneId id)
 {
-	scenes[(int)currentSceneId]->Exit();
+	currentScene->Exit();
 	currentSceneId = id;
 	currentScene = scenes[(int)currentSceneId];
 	currentScene->Enter();
@@ -21,7 +21,7 @@ void SceneMgr::Init()
 {
 	if (!scenes.empty())
 	{
-		return;
+		Release();
 	}
 			
 	scenes.push_back(new SceneTitile());
@@ -51,7 +51,7 @@ void SceneMgr::Release()
 
 	for (auto scene : scenes)
 	{
-		scene->Release();
+		/*scene->Release();*/
 		delete scene;
 	}
 	scenes.clear();
@@ -74,12 +74,12 @@ void SceneMgr::Update(float dt)
 	//	bgm.sound.play();
 	//	bgmPlay = false;
 	//}
-	scenes[(int)currentSceneId]->Update(dt);
+	currentScene->Update(dt);
 }
 
 void SceneMgr::Draw(sf::RenderWindow& window)
 {
-	scenes[(int)currentSceneId]->Draw(window);
+	currentScene->Draw(window);
 }
 
 float SceneMgr::TimerTime() const

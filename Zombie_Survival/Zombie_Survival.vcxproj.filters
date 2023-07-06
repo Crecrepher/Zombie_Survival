@@ -69,7 +69,13 @@
     <ClCompile Include="GameObject\EffectGo.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\RectGo.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="GameObject\SoundGo.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\CirGo.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scene\SceneDev1.cpp">
@@ -78,19 +84,19 @@
     <ClCompile Include="Scene\SceneDev2.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Player.cpp">
+    <ClCompile Include="GameObject\ZSObject\Player.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\VertexArrayGo.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Zombie.cpp">
+    <ClCompile Include="GameObject\ZSObject\Zombie.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\RectGo.cpp">
+    <ClCompile Include="GameObject\ZSObject\Bullet.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Bullet.cpp">
+    <ClCompile Include="GameObject\ZSObject\Blood.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -149,7 +155,13 @@
     <ClInclude Include="GameObject\EffectGo.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject\RectGo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="GameObject\SoundGo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\CirGo.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scene\SceneDev1.h">
@@ -158,19 +170,22 @@
     <ClInclude Include="Scene\SceneDev2.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Player.h">
+    <ClInclude Include="GameObject\ZSObject\Player.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\VertexArrayGo.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Zombie.h">
+    <ClInclude Include="GameObject\ZSObject\Zombie.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\RectGo.h">
+    <ClInclude Include="GameObject\ZSObject\Bullet.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Bullet.h">
+    <ClInclude Include="Universial\ObjectPool.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\ZSObject\Blood.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

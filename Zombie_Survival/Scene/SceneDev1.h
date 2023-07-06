@@ -1,22 +1,28 @@
 #pragma once
 #include "Scene.h"
-#include "EffectGo.h"
+#include "ObjectPool.h"
+
 #include <sstream>
 
 class Player;
 class VertexArrayGo;
 class Zombie;
+class Blood;
 
 class SceneDev1 : public Scene
 {
 protected:
 
 	Player* player;
-	std::list<Zombie*> zombiePool;
-	std::list<Zombie*> zombies;
-	sf::Vector2f tilesize = { 50.f,50.f };
+	ObjectPool<Zombie> zombiePool;
+	ObjectPool<Blood> bloodPool;
+
+	sf::FloatRect wallBounds;
+	bool isGameOver = false;
 
 public:
+	
+
 	SceneDev1();
 	virtual ~SceneDev1() override;
 
@@ -31,15 +37,14 @@ public:
 
 	VertexArrayGo* CreateBackground(sf::Vector2f size, sf::Vector2f tileSize, sf::Vector2f texSize, std::string textureId);
 
-	void CreateZombies(int count);
 	void SpawnZombies(int count,sf::Vector2f center, float radius);
 	void ClearZombies();
 
-	void OnDieZombie(Zombie* zombie);
+	void ClearBloods();
 
-	std::list<Zombie*>* GetZombieList();
-	sf::Vector2f GetMapTop();
-	sf::Vector2f GetMapBot();
-	bool InTheMap(sf::Vector2f position);
+	void OnDieZombie(Zombie* zombie);
+	void OnDiePlayer();
+
+	const std::list<Zombie*>* GetZombieList() const;
 };
 

@@ -38,7 +38,7 @@ void Blood::Update(float dt)
 	if (timer<=0)
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(this);
-		pool.Return(this);
+		pool->Return(this);
 		return;
 	}
 }
