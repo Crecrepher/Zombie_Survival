@@ -11,7 +11,7 @@ Scene::Scene(SceneId id)
 
 Scene::~Scene()
 {
-	Release();
+	//Release();
 }
 
 GameObject* Scene::FindGo(const std::string& name)
@@ -20,6 +20,7 @@ GameObject* Scene::FindGo(const std::string& name)
 	auto it = std::find_if(gameObjects.begin(), gameObjects.end(), compare);
 	//람다 표현식 : compare에서 true가 나오는 녀석이 나타날때까지 돌리고 찾아서 나오면 돌려줌
 	//함수의 레퍼런스라고 보면 됨
+
 	if (it == gameObjects.end())
 	{
 		return nullptr;
@@ -66,7 +67,8 @@ GameObject* Scene::AddGo(GameObject* go)
 
 void Scene::RemoveGo(GameObject* go)
 {
-	gameObjects.remove(go);
+	//gameObjects.remove(go);
+	removeGameObjects.push_back(go);
 	//delete go;
 }
 
@@ -113,6 +115,12 @@ void Scene::Enter()
 
 void Scene::Exit()
 {
+	for (auto go : removeGameObjects)
+	{
+		gameObjects.remove(go);
+	}
+	removeGameObjects.clear();
+
 	RESOURCE_MGR.Unload(resources);
 }
 
@@ -125,6 +133,11 @@ void Scene::Update(float dt)
 			go->Update(dt);
 		}
 	}
+	for (auto go : removeGameObjects)
+	{
+		gameObjects.remove(go);
+	}
+	removeGameObjects.clear();
 }
 
 void Scene::Draw(sf::RenderWindow& window)

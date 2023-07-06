@@ -119,8 +119,8 @@ void SceneMenu::Update(float dt)
 
 	//아이콘 애니메이션
 	EffectGo* findGo = (EffectGo*)FindGo("Icon");
-	findGo->SetSize(1.3 + (SCENE_MGR.TimerTime() / 10),
-		1.3 + (SCENE_MGR.TimerTime() / 10));
+	findGo->SetSize(1.3f + (SCENE_MGR.TimerTime() / 10),
+		1.3f + (SCENE_MGR.TimerTime() / 10));
 
 	//메뉴선택
 	RectGo* findRGo = (RectGo*)FindGo("MenuSelector");

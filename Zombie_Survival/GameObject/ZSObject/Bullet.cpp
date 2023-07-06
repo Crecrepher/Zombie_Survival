@@ -2,6 +2,7 @@
 #include "Bullet.h"
 #include "Zombie.h"
 #include "SceneMgr.h"
+#include "Scene.h"
 Bullet::Bullet(const std::string id, const std::string n)
 	:SpriteGo(id,n)
 {
@@ -11,7 +12,7 @@ Bullet::~Bullet()
 {
 }
 
-void Bullet::SetZombieList(std::list<Zombie*>* list)
+void Bullet::SetZombieList(const std::list<Zombie*>* list)
 {
 	zombies = list;
 }
@@ -53,8 +54,8 @@ void Bullet::Update(float dt)
 	range -= speed * dt;
 	if (range <=0.f)
 	{
-
-		SetActive(false);
+		SCENE_MGR.GetCurrScene()->RemoveGo(this);
+		pool->Return(this);
 		return;
 	}
 
@@ -67,8 +68,9 @@ void Bullet::Update(float dt)
 		{
 			if (sprite.getGlobalBounds().intersects(zombie->sprite.getGlobalBounds()))
 			{
-				zombie->OnHitBullet(damdage);
-				SetActive(false);
+				zombie->OnHitBullet(damage);
+				SCENE_MGR.GetCurrScene()->RemoveGo(this);
+				pool->Return(this);
 				break;
 			}
 		}
