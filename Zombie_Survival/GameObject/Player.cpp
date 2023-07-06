@@ -33,7 +33,8 @@ void Player::Init()
 void Player::Reset()
 {
 	SpriteGo::Reset();
-	hp = 100;
+	hp = maxHp;
+	isAlive = true;
 }
 
 void Player::Release()
@@ -56,14 +57,6 @@ void Player::Update(float dt)
 	//¿Ãµø
 	direction.x = INPUT_MGR.GetAxisRaw(Axis::Horizontal);
 	direction.y = INPUT_MGR.GetAxisRaw(Axis::Vertical);
-	//if ((position.x < mapTop.x && direction.x <0 )|| (position.x > mapBot.x && mapTop.x && direction.x > 0))
-	//{
-	//	direction.x = 0;
-	//}
-	//if ((position.y < mapTop.y && direction.y < 0)|| (position.y > mapBot.y && direction.y > 0))
-	//{
-	//	direction.y = 0;
-	//}
 	position += direction * speed * dt;
 	if (!wallBounds.contains(position))
 	{
@@ -134,4 +127,31 @@ void Player::Ouch(float dt)
 float Player::GetHp()
 {
 	return hp;
+}
+
+void Player::OnHitted(int damdge)
+{
+	if (!isAlive)
+	{
+		return;
+	}
+
+	hp = std::max(hp - damdge,0);
+	sprite.setColor(sf::Color::Color(205, 12, 34,200));
+	invincibility = 25;
+	if (hp == 0)
+	{
+		OnDie();
+	}
+}
+
+void Player::OnDie()
+{
+	isAlive = false;
+
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(SCENE_MGR.GetCurrScene());
+	if (sceneDev1 != nullptr)
+	{
+		sceneDev1->OnDiePlayer();
+	}
 }

@@ -76,8 +76,6 @@ void SceneDev1::Release()
 
 void SceneDev1::Enter()
 {
-
-
 	Scene::Enter();
 	
 	worldView.setCenter(0.f, 0.f);
@@ -93,6 +91,8 @@ void SceneDev1::Enter()
 	hp->rectangle.setFillColor(sf::Color::Red);
 	hp->SetPosition(FRAMEWORK.GetWindowSize().x * 0.25, FRAMEWORK.GetWindowSize().y * 0.9);
 	hp->sortLayer = 100;
+
+	isGameOver = false;
 }
 
 void SceneDev1::Exit()
@@ -105,6 +105,11 @@ void SceneDev1::Update(float dt)
 {
 	Scene::Update(dt);
 
+	if (isGameOver)
+	{
+		SCENE_MGR.ChangeScene(sceneId);
+		return;
+	}
 	worldView.setCenter(player->GetPosition());
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Escape))
 	{
@@ -251,6 +256,11 @@ void SceneDev1::OnDieZombie(Zombie* zombie)
 	zombies.remove(zombie);
 	zombie->SetActive(false);
 	zombiePool.push_back(zombie);
+}
+
+void SceneDev1::OnDiePlayer()
+{
+	isGameOver = true;
 }
 
 std::list<Zombie*>* SceneDev1::GetZombieList()

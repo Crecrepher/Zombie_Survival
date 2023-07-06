@@ -6,7 +6,9 @@ protected:
 	sf::Vector2f direction;
 	sf::Vector2f look;
 	float speed;
-	float hp = 100;
+
+	int maxHp = 100;
+	int hp = 0;
 	float invincibility = 0;
 	sf::Vector2f mapTop;
 	sf::Vector2f mapBot;
@@ -14,6 +16,7 @@ protected:
 	sf::FloatRect wallBounds;
 	sf::Vector2f wallBoundsLT;
 	sf::Vector2f wallBoundsRB;
+
 
 public:
 	Player(const std::string id = "",const std::string n = "");
@@ -33,5 +36,10 @@ public:
 	void GetMap();
 	void Ouch(float dt);
 	float GetHp();
+
+	bool isAlive = false;
+
+	void OnHitted(int damdge);
+	void OnDie();
 };
 

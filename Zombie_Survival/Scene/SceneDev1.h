@@ -17,6 +17,7 @@ protected:
 	std::list<Zombie*> zombies;
 	sf::Vector2f tilesize = { 50.f,50.f };
 	sf::FloatRect wallBounds;
+	bool isGameOver = false;
 
 public:
 	SceneDev1();
@@ -38,6 +39,7 @@ public:
 	void ClearZombies();
 
 	void OnDieZombie(Zombie* zombie);
+	void OnDiePlayer();
 
 	std::list<Zombie*>* GetZombieList();
 	sf::Vector2f GetMapTop();

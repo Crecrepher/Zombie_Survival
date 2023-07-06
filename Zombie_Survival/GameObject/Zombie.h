@@ -16,6 +16,8 @@ public:
 	static const std::string textureIds[3];
 	static const float speedStats[3];
 	static const int hpStats[3];
+	static const int damageStats[3];
+	static const float attackRateStats[3];
 
 protected:
 	Types zombieType;
@@ -25,6 +27,11 @@ protected:
 	float speed = 0.f;
 	int maxHp = 0;
 	int hp = 0;
+	int damage = 0;
+	float attackRate = 0.f;
+	
+	float attackTimer = 0.f;
+
 	Player* player = nullptr;
 
 public:
