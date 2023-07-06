@@ -11,6 +11,7 @@
 #include "VertexArrayGo.h"
 #include "RectGo.h"
 #include "Blood.h"
+#include "TextGo.h"
 
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr)
 {
@@ -23,6 +24,7 @@ SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr)
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/bullet.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/crosshair.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/blood.png"));
+	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/ammo_icon.png"));
 }
 
 SceneDev1::~SceneDev1()
@@ -46,10 +48,17 @@ void SceneDev1::Init()
 	sf::Vector2f tileTexSize = { 50.f, 50.f };
 
 	player = (Player*)AddGo(new Player("graphics/player.png", "Player"));
+	player->sortLayer = 1;
 	VertexArrayGo* background = CreateBackground({ 30, 30 }, tileWorldSize, tileTexSize, "graphics/background_sheet.png");
 	AddGo(background);
 	AddGo(new RectGo("Hp"));
-
+	AddGo(new TextGo("Score"));
+	AddGo(new TextGo("HiScore"));
+	AddGo(new TextGo("RemainAmmo"));
+	AddGo(new TextGo("WaveNZombies"));
+	AddGo(new TextGo("Shop"));
+	AddGo(new SpriteGo("graphics/ammo_icon.png","AmmoIcon"));
+	AddGo(new SpriteGo("graphics/background.png", "Back"));
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -97,15 +106,81 @@ void SceneDev1::Enter()
 {
 	Scene::Enter();
 
+	score = 0;
+	wave = 0;
+	pause = true;
 	/*worldView.setCenter(0.f, 0.f);*/
 	isGameOver = false;
 	player->SetPosition(0.f,0.f);
+	padeIn = 0;
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetOrigin(Origins::ML);
 	hp->rectangle.setFillColor(sf::Color::Red);
-	hp->SetPosition(FRAMEWORK.GetWindowSize().x * 0.25f, FRAMEWORK.GetWindowSize().y * 0.9f);
+	hp->SetPosition(FRAMEWORK.GetWindowSize().x * 0.25f, FRAMEWORK.GetWindowSize().y -60.f);
 	hp->sortLayer = 100;
+
+	TextGo* findTGo = (TextGo*)FindGo("Score");
+	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
+	findTGo->text.setString("\nPRESS ENTER\nTO CONTINUE");
+	findTGo->text.setCharacterSize(130);
+	findTGo->text.setFillColor(sf::Color::White);
+	Utils::SetOrigin(findTGo->text, Origins::TL);
+	findTGo->text.setPosition(50.f, 50.f);
+	findTGo->sortLayer = 100;
+
+	findTGo = (TextGo*)FindGo("HiScore");
+	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
+	std::stringstream ss;
+	ss << "HI SCORE:" << hiScore;
+	findTGo->text.setString(ss.str());
+	findTGo->text.setCharacterSize(60);
+	findTGo->text.setFillColor(sf::Color::White);
+	Utils::SetOrigin(findTGo->text, Origins::MR);
+	findTGo->text.setPosition(FRAMEWORK.GetWindowSize().x - 100.f, 50.f);
+	findTGo->sortLayer = 100;
+
+	findTGo = (TextGo*)FindGo("RemainAmmo");
+	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
+	ss.str("");
+	ss.clear();
+	ss << player->GetAmmo();
+	findTGo->text.setString(ss.str());
+	findTGo->text.setCharacterSize(60);
+	findTGo->text.setFillColor(sf::Color::White);
+	Utils::SetOrigin(findTGo->text, Origins::ML);
+	findTGo->text.setPosition(100.f, FRAMEWORK.GetWindowSize().y - 50.f);
+	findTGo->sortLayer = 100;
+
+	findTGo = (TextGo*)FindGo("WaveNZombies");
+	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
+	findTGo->text.setString("WAVE:0\tZOMBIES:10");
+	findTGo->text.setCharacterSize(60);
+	findTGo->text.setFillColor(sf::Color::White);
+	Utils::SetOrigin(findTGo->text, Origins::MR);
+	findTGo->text.setPosition(FRAMEWORK.GetWindowSize().x - 50.f, FRAMEWORK.GetWindowSize().y - 50.f);
+	findTGo->sortLayer = 100;
+
+	SpriteGo* findSGo = (SpriteGo*)FindGo("AmmoIcon");
+	findSGo->SetOrigin(Origins::ML);
+	findSGo->SetPosition(30.f, FRAMEWORK.GetWindowSize().y - 40.f);
+	findSGo->sortLayer = 100;
+
+	findSGo = (SpriteGo*)FindGo("Back");
+	findSGo->SetOrigin(Origins::TL);
+	findSGo->SetSize(0.7, 0.7);
+	findSGo->SetPosition(0, 0);
+	findSGo->sprite.setColor(sf::Color(255,255,255,0));
+	findSGo->sortLayer = 101;
+
+	findTGo = (TextGo*)FindGo("Shop");
+	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
+	findTGo->text.setString("\n\n1- SHOP SAMPLE 1\n2- SHOP SAMPLE 2\n3- SHOP SAMPLE 3");
+	findTGo->text.setCharacterSize(60);
+	findTGo->text.setFillColor(sf::Color(255, 255, 255, 0));
+	Utils::SetOrigin(findTGo->text, Origins::TL);
+	findTGo->text.setPosition(100.f,50.f);
+	findTGo->sortLayer = 102;
 }
 
 void SceneDev1::Exit()
@@ -119,6 +194,43 @@ void SceneDev1::Exit()
 
 void SceneDev1::Update(float dt)
 {
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Escape))
+	{
+		SCENE_MGR.ChangeScene(SceneId::Title);
+		return;
+	}
+	worldView.setCenter(player->GetPosition());
+
+	if (wave > 1 && pause&& padeIn<254)
+	{
+		padeIn += dt * 100;
+		SpriteGo* findSGo = (SpriteGo*)FindGo("Back");
+		findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
+		TextGo* findTGo = (TextGo*)FindGo("Shop");
+		findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
+	}
+	else if (wave > 1 && !pause && padeIn > 0)
+	{
+		padeIn -= dt * 300;
+		SpriteGo* findSGo = (SpriteGo*)FindGo("Back");
+		findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
+		TextGo* findTGo = (TextGo*)FindGo("Shop");
+		findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
+	}
+	if (pause)
+	{
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Enter))
+		{
+			pause = false;
+			TextGo* findTGo = (TextGo*)FindGo("Score");
+			findTGo->text.setPosition(20.f, 20.f);
+			findTGo->text.setString("SCORE:0");
+			findTGo->text.setCharacterSize(60);
+
+			SpriteGo* findSGo = (SpriteGo*)FindGo("Back");
+		}
+		return;
+	}
 	Scene::Update(dt);
 
 	if (isGameOver)
@@ -126,15 +238,12 @@ void SceneDev1::Update(float dt)
 		SCENE_MGR.ChangeScene(sceneId);
 		return;
 	}
-	worldView.setCenter(player->GetPosition());
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Escape))
-	{
-		SCENE_MGR.ChangeScene(SceneId::Title);
-		return;
-	}
+	
+	
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	{
 		SpawnZombies(10, player->GetPosition(), 1000.f);
+		wave++;
 	}
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
 	{
@@ -144,10 +253,29 @@ void SceneDev1::Update(float dt)
 	if (zombiePool.GetUseList().size() == 0)
 	{
 		SpawnZombies(10, player->GetPosition(), 1000.f);
+		wave++;
+		TextGo* findTGo = (TextGo*)FindGo("WaveNZombies");
+		std::stringstream ss; 
+		ss << "WAVE:" << wave << "\t" << "ZOMBIES:" << zombiePool.GetUseList().size();
+		findTGo->text.setString(ss.str());
+		if (wave>1)
+		{
+			pause = true;
+		}
 	}
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetSize({ player->GetHp() * 3.f, 30.f });
+
+	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Button::Left))
+	{
+		TextGo* findTGo = (TextGo*)FindGo("RemainAmmo");
+		std::stringstream ss;
+		ss << player->GetAmmo();
+		findTGo->text.setString(ss.str());
+	}
+
+	
 }
 
 void SceneDev1::Draw(sf::RenderWindow& window)
@@ -227,6 +355,7 @@ void SceneDev1::SpawnZombies(int count, sf::Vector2f center, float radius)
 		while ((Utils::Distance(center, pos) < 700.f && radius > 100.f));
 	
 		zombie->SetPosition(pos);
+		zombie->sortLayer = 2;
 		AddGo(zombie);
 	}
 }
@@ -258,6 +387,28 @@ void SceneDev1::OnDieZombie(Zombie* zombie)
 	float rot = Utils::RandomRange(0, 270);
 	blood->SetSize(bloodsize, bloodsize);
 	blood->sprite.setRotation(rot);
+
+	score += 20-(5*(int)zombie->GetType());
+	TextGo* findTGo = (TextGo*)FindGo("Score");
+	std::stringstream ss;
+	ss << "SCORE:" << score;
+	findTGo->text.setString(ss.str());
+	if (score > hiScore)
+	{
+		hiScore = score;
+		findTGo = (TextGo*)FindGo("HiScore");
+		ss.str("");
+		ss.clear();
+		findTGo->text.setFillColor(sf::Color::Green);
+		ss << "HI SCORE:" << hiScore;
+		findTGo->text.setString(ss.str());
+	}
+
+	findTGo = (TextGo*)FindGo("WaveNZombies");
+	ss.str("");
+	ss.clear();
+	ss << "WAVE:" << wave << "\t" << "ZOMBIES:" << zombiePool.GetUseList().size()-1;
+	findTGo->text.setString(ss.str());
 
 	RemoveGo(zombie);
 	zombiePool.Return(zombie);

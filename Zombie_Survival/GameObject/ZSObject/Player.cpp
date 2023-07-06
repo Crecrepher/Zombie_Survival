@@ -46,6 +46,7 @@ void Player::Reset()
 		SCENE_MGR.GetCurrScene()->RemoveGo(bullet);
 	}
 	poolBullets.Clear();
+	ammo = maxAmmo;
 }
 
 void Player::Release()
@@ -79,11 +80,11 @@ void Player::Update(float dt)
 
 
 	//น฿ป็
-	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
+	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left)&&ammo>0)
 	{
 		Bullet* bullet = poolBullets.Get();
 		bullet->Fire(GetPosition(), look, 1000.f);
-
+		ammo--;
 		Scene* scene = SCENE_MGR.GetCurrScene();
 		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 		if (sceneDev1 != nullptr)
@@ -128,6 +129,11 @@ void Player::Ouch(float dt)
 int Player::GetHp()
 {
 	return hp;
+}
+
+const int Player::GetAmmo() const
+{
+	return ammo;
 }
 
 void Player::OnHitted(int damdge)

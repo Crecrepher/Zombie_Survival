@@ -7,6 +7,7 @@ protected:
 	int menuIndex;
 	float closeTimer;
 	bool isClose;
+	int hiScore = 0;
 public:
 	SceneMenu();
 	virtual ~SceneMenu() override;

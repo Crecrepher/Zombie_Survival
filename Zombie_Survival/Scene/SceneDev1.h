@@ -20,6 +20,12 @@ protected:
 	sf::FloatRect wallBounds;
 	bool isGameOver = false;
 
+	int score = 0;
+	int hiScore = 0;
+	int wave = 0;
+
+	bool pause = true;
+	float padeIn = 0;
 public:
 	
 

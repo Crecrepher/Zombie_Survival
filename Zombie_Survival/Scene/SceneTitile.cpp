@@ -31,6 +31,7 @@ void SceneTitile::Init()
 	uiView.setCenter(centerPos);
 	//계속써도되는거 add
 	Release();
+	AddGo(new SpriteGo("graphics/background.png", "Back"));
 	AddGo(new SpriteGo("graphics/icon.png","Icon"));
 	AddGo(new TextGo("Text"));
 	AddGo(new SoundGo("Start"));
@@ -57,9 +58,13 @@ void SceneTitile::Enter()
 	Scene::Enter();
 	SpriteGo* findSGo = (SpriteGo*)FindGo("Icon");
 	findSGo->SetOrigin(Origins::MC);
-	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2.f, FRAMEWORK.GetWindowSize().y / 3.f);
+	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2.f, FRAMEWORK.GetWindowSize().y / 2.5f);
 	findSGo->sortLayer = 1;
 
+	findSGo = (SpriteGo*)FindGo("Back");
+	findSGo->SetOrigin(Origins::TL);
+	findSGo->SetSize(0.7, 0.7);
+	findSGo->SetPosition(0, 0);
 
 	TextGo* findTGo = (TextGo*)FindGo("Text");
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/neodgm.ttf"));

@@ -16,8 +16,9 @@ void Framework::Init(int width, int height, const std::string& title)
 
     //傈开府家胶 何福扁
     RESOURCE_MGR.Load(ResourceTypes::Texture, "graphics/icon.png");
+    RESOURCE_MGR.Load(ResourceTypes::Texture, "graphics/background.png");
     RESOURCE_MGR.Load(ResourceTypes::Sound, "sound/select.wav");
-
+    RESOURCE_MGR.Load(ResourceTypes::Font, "fonts/zombiecontrol.ttf");
     SCENE_MGR.Init();
 
  
@@ -27,7 +28,9 @@ void Framework::Release()
 {
     //傈开府家胶 秦力
     RESOURCE_MGR.UnLoad(ResourceTypes::Texture, "graphics/icon.png");
+    RESOURCE_MGR.UnLoad(ResourceTypes::Texture, "graphics/background.png");
     RESOURCE_MGR.UnLoad(ResourceTypes::Sound, "sound/select.wav");
+    RESOURCE_MGR.UnLoad(ResourceTypes::Font, "fonts/zombiecontrol.ttf");
 
     SCENE_MGR.Release();
 }

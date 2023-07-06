@@ -7,8 +7,8 @@
 #include "RectGo.h"
 #include "SoundGo.h"
 #include "Framework.h"
-
-
+#include "TextGo.h"
+#include <sstream>
 SceneMenu::SceneMenu() : Scene(SceneId::Menu), 
 menuIndex(0), closeTimer(0.f), isClose(false)
 {
@@ -35,6 +35,7 @@ void SceneMenu::Init()
 	uiView.setSize(windowSize);
 	uiView.setCenter(centerPos);
 
+	AddGo(new SpriteGo("graphics/background.png", "Back"));
 	AddGo(new EffectGo("graphics/icon.png","Icon"));
 	AddGo(new SpriteGo("graphics/b1.png","Menu1"));
 	AddGo(new SpriteGo("graphics/b2.png","Menu2"));
@@ -43,6 +44,7 @@ void SceneMenu::Init()
 	AddGo(new SoundGo("MoveSound"));
 	AddGo(new SoundGo("SelectSound"));
 	AddGo(new SoundGo("ExitSound"));
+	AddGo(new TextGo("HiScore"));
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -61,11 +63,13 @@ void SceneMenu::Release()
 
 void SceneMenu::Enter()
 {
+	Scene::Enter();
+
 	menuIndex = 0;
 	Scene::Enter();
 	EffectGo* findEGo = (EffectGo*)FindGo("Icon");
 	findEGo->SetOrigin(Origins::MC);
-	findEGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2.f, FRAMEWORK.GetWindowSize().y / 3.f);
+	findEGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2.f, FRAMEWORK.GetWindowSize().y / 2.5f);
 	findEGo->sortLayer = 1;
 
 	SpriteGo* findSGo = (SpriteGo*)FindGo("Menu3");
@@ -74,6 +78,11 @@ void SceneMenu::Enter()
 		FRAMEWORK.GetWindowSize().y*0.8f);
 	findSGo->SetSize(0.7f, 0.7f);
 	findSGo->sortLayer = 3;
+
+	findSGo = (SpriteGo*)FindGo("Back");
+	findSGo->SetOrigin(Origins::TL);
+	findSGo->SetSize(0.7, 0.7);
+	findSGo->SetPosition(0, 0);
 
 	findSGo = (SpriteGo*)FindGo("Menu2");
 	findSGo->SetOrigin(Origins::MC);
@@ -106,6 +115,18 @@ void SceneMenu::Enter()
 
 	soundGo = (SoundGo*)FindGo("ExitSound");
 	soundGo->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/death.wav"));
+
+	TextGo* findTGo = (TextGo*)FindGo("HiScore");
+	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
+
+	std::stringstream ss;
+	ss << "HI SCORE:" << hiScore;
+	findTGo->text.setString(ss.str());
+	findTGo->text.setCharacterSize(60);
+	findTGo->text.setFillColor(sf::Color::White);
+	Utils::SetOrigin(findTGo->text, Origins::MR);
+	findTGo->text.setPosition(FRAMEWORK.GetWindowSize().x - 100.f, 50.f);
+	findTGo->sortLayer = 100;
 }
 
 void SceneMenu::Exit()
@@ -153,7 +174,7 @@ void SceneMenu::Update(float dt)
 		switch (menuIndex)
 		{
 		case 0: //1인 플레이
-			SCENE_MGR.ChangeScene(SceneId::Game);
+			SCENE_MGR.ChangeScene(SceneId::Dev1);
 			SCENE_MGR.BgmOn();
 			break;
 

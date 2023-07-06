@@ -23,8 +23,10 @@ protected:
 	int hp = 0;
 
 	ObjectPool<Bullet> poolBullets;
-
+	int maxAmmo = 900;
+	int ammo = 0;
 public:
+
 	Player(const std::string id = "",const std::string n = "");
 
 	virtual void SetPosition(float x, float y)override;
@@ -41,6 +43,7 @@ public:
 
 	void Ouch(float dt);
 	int GetHp();
+	const int GetAmmo() const;
 
 	bool isAlive = false;
 
