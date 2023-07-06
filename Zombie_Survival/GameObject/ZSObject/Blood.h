@@ -7,7 +7,7 @@ class Blood : public SpriteGo
 protected:
 	float timer = 100;
 public:
-	ObjectPool<Blood> pool;
+	ObjectPool<Blood>* pool;
 	Blood(const std::string id = "", const std::string n = "");
 	virtual ~Blood() override;
 

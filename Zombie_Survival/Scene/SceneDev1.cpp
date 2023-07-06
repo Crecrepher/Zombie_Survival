@@ -27,7 +27,7 @@ SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr)
 
 SceneDev1::~SceneDev1()
 {
-	//Release();
+	Release();
 }
 
 void SceneDev1::Init()
@@ -37,16 +37,27 @@ void SceneDev1::Init()
 	// Ä«¸Þ¶ó
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
-	worldView.setSize(windowSize);
 
+	worldView.setSize(windowSize);
 	uiView.setSize(windowSize);
 	uiView.setCenter(centerPos);
 
-	sf::Vector2f tileWorldSize = { 50,50 };
-	
-	VertexArrayGo* background = CreateBackground({ 30, 30 }, tileWorldSize, { 50.f, 50.f }, "graphics/background_sheet.png");
+	sf::Vector2f tileWorldSize = { 50.f, 50.f };
+	sf::Vector2f tileTexSize = { 50.f, 50.f };
+
+	player = (Player*)AddGo(new Player("graphics/player.png", "Player"));
+	VertexArrayGo* background = CreateBackground({ 30, 30 }, tileWorldSize, tileTexSize, "graphics/background_sheet.png");
+	AddGo(background);
+	AddGo(new RectGo("Hp"));
+
+	for (auto go : gameObjects)
+	{
+		go->Init();
+	}
+
+
 	background->SetOrigin(Origins::MC);
-	background->SetPosition(0.f,0.f);
+	background->SetPosition(0.f, 0.f);
 	background->sortLayer = -1;
 
 	wallBounds = background->vertexArray.getBounds();
@@ -54,19 +65,11 @@ void SceneDev1::Init()
 	wallBounds.height -= tileWorldSize.y * 2.f;
 	wallBounds.left += tileWorldSize.x;
 	wallBounds.top += tileWorldSize.y;
-	
 
-	AddGo(background);
-
-	player = (Player*)AddGo(new Player("graphics/player.png", "Player"));
 	player->SetWallBounds(wallBounds);
-	//CreateZombies(1000);
-	AddGo(zombiePool.Get());
-	AddGo(new RectGo("Hp"));
 
-	
 	zombiePool.OnCreate = [this](Zombie* zombie) {
-		Zombie::Types zombieType = (Zombie::Types)Utils::RandomRange(0,(int) Zombie::Types::Crawler);
+		Zombie::Types zombieType = (Zombie::Types)Utils::RandomRange(0,Zombie::TotalTypes-1);
 		zombie->SetType(zombieType);
 		zombie->SetPlayer(player);
 	};
@@ -75,16 +78,9 @@ void SceneDev1::Init()
 	ObjectPool<Blood>* ptr = &bloodPool;
 	bloodPool.OnCreate = [this,ptr](Blood* blood) {
 		blood->textureId = "graphics/blood.png";
-		blood->pool = *ptr;
+		blood->pool = ptr;
 	};
 	bloodPool.Init();
-	
-
-	for (auto go : gameObjects)
-	{
-		go->Init();
-	}
-	
 }
 
 void SceneDev1::Release()
@@ -100,24 +96,21 @@ void SceneDev1::Release()
 void SceneDev1::Enter()
 {
 	Scene::Enter();
-	ClearZombies();
-	ClearBloods();
 
-	worldView.setCenter(0.f, 0.f);
+	/*worldView.setCenter(0.f, 0.f);*/
+	isGameOver = false;
 	player->SetPosition(0.f,0.f);
-	player->Reset();
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetOrigin(Origins::ML);
 	hp->rectangle.setFillColor(sf::Color::Red);
 	hp->SetPosition(FRAMEWORK.GetWindowSize().x * 0.25f, FRAMEWORK.GetWindowSize().y * 0.9f);
 	hp->sortLayer = 100;
-
-	isGameOver = false;
 }
 
 void SceneDev1::Exit()
 {
+	ClearBloods();
 	ClearZombies();
 	player->Reset();
 
@@ -137,6 +130,7 @@ void SceneDev1::Update(float dt)
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Escape))
 	{
 		SCENE_MGR.ChangeScene(SceneId::Title);
+		return;
 	}
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	{
@@ -151,11 +145,6 @@ void SceneDev1::Update(float dt)
 	{
 		SpawnZombies(10, player->GetPosition(), 1000.f);
 	}
-
-	//if (player->GetHp() <= 0)
-	//{
-	//	Enter();
-	//}
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetSize({ player->GetHp() * 3.f, 30.f });
@@ -263,8 +252,8 @@ void SceneDev1::ClearBloods()
 void SceneDev1::OnDieZombie(Zombie* zombie)
 {
 	Blood* blood = bloodPool.Get();
-	AddGo(blood);
 	blood->SetPosition(zombie->GetPosition());
+	AddGo(blood);
 	float bloodsize = 0.5 + (1.0-((int)zombie->GetType() * 0.5));
 	float rot = Utils::RandomRange(0, 270);
 	blood->SetSize(bloodsize, bloodsize);
@@ -279,7 +268,7 @@ void SceneDev1::OnDiePlayer()
 	isGameOver = true;
 }
 
-const std::list<Zombie*>* SceneDev1::GetZombieList()
+const std::list<Zombie*>* SceneDev1::GetZombieList() const
 {
 	return &zombiePool.GetUseList();
 }

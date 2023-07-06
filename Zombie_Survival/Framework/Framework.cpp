@@ -55,7 +55,7 @@ void Framework::Run()
     sf::Cursor cursor;
     if (cursor.loadFromPixels(cursorImg.getPixelsPtr(), cursorImg.getSize(), { cursorImg.getSize().x / 2, cursorImg.getSize().y / 2 }))
     {
-        FRAMEWORK.GetWindow().setMouseCursor(cursor);
+        window.setMouseCursor(cursor);
     }
 
     while (window.isOpen())
@@ -73,21 +73,19 @@ void Framework::Run()
             case sf::Event::Closed:
                 SCENE_MGR.GetCurrScene()->Exit();
                 window.close();
-     
                 break;
             case sf::Event::GainedFocus:
                 window.setMouseCursor(cursor);
                 break;
             }
-
             INPUT_MGR.Update(event);
         }
 
         if (window.isOpen())
 		{
 			Update(dt);
-			window.clear();
 
+			window.clear();
 			Draw();
 			window.display();
         }

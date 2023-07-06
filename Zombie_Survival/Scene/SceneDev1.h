@@ -7,7 +7,6 @@
 class Player;
 class VertexArrayGo;
 class Zombie;
-class SpriteGo;
 class Blood;
 
 class SceneDev1 : public Scene
@@ -46,6 +45,6 @@ public:
 	void OnDieZombie(Zombie* zombie);
 	void OnDiePlayer();
 
-	const std::list<Zombie*>* GetZombieList();
+	const std::list<Zombie*>* GetZombieList() const;
 };
 
