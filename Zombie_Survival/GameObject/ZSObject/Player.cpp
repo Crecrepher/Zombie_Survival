@@ -47,6 +47,8 @@ void Player::Reset()
 	}
 	poolBullets.Clear();
 	ammo = maxAmmo;
+	magazine = maxMagazine;
+	reloadRateTimer = 0.f;
 }
 
 void Player::Release()
@@ -88,11 +90,11 @@ void Player::Update(float dt)
 
 
 	//발사
-	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left)&&ammo>0)
+	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left) && magazine > 0)
 	{
 		Bullet* bullet = poolBullets.Get();
 		bullet->Fire(GetPosition(), look, 1000.f);
-		ammo--;
+		magazine--;
 		Scene* scene = SCENE_MGR.GetCurrScene();
 		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 		if (sceneDev1 != nullptr)
@@ -108,6 +110,27 @@ void Player::Update(float dt)
 	else
 	{
 		sprite.setColor(sf::Color::White);
+	}
+
+	//재장전
+	bool isReload = (reloadStatus == ReloadStatus::START) ? true : false;
+	bool reloadPossible = INPUT_MGR.GetKeyDown(sf::Keyboard::R) && magazine < maxMagazine;
+	if (!isReload && (reloadPossible || magazine == 0))
+	{
+		ammo += magazine;
+		magazine = 0;
+		reloadStatus = ReloadStatus::START;
+	}
+	if (isReload)
+	{
+		reloadRateTimer += dt;
+		if (reloadRateTimer >= reloadRate)
+		{
+			ammo -= maxMagazine;
+			magazine = maxMagazine;
+			reloadRateTimer = 0.f;
+			reloadStatus = ReloadStatus::END;
+		}
 	}
 }
 
@@ -142,6 +165,21 @@ int Player::GetHp()
 const int Player::GetAmmo() const
 {
 	return ammo;
+}
+
+const int Player::GetMagazine() const
+{
+	return magazine;
+}
+
+const ReloadStatus Player::GetReload() const
+{
+	return reloadStatus;
+}
+
+void Player::SetReloadStatus(ReloadStatus status)
+{
+	reloadStatus = status;
 }
 
 void Player::OnHitted(int damdge)

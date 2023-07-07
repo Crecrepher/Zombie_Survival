@@ -151,7 +151,7 @@ void SceneDev1::Enter()
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
 	ss.str("");
 	ss.clear();
-	ss << player->GetAmmo();
+	ss << player->GetMagazine() << " / " << player->GetAmmo();
 	findTGo->text.setString(ss.str());
 	findTGo->text.setCharacterSize(60);
 	findTGo->text.setFillColor(sf::Color::White);
@@ -273,15 +273,17 @@ void SceneDev1::Update(float dt)
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetSize({ player->GetHp() * 3.f, 30.f });
 
-	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Button::Left))
+	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Button::Left) || player->GetReload() != ReloadStatus::NONE)
 	{
 		TextGo* findTGo = (TextGo*)FindGo("RemainAmmo");
 		std::stringstream ss;
-		ss << player->GetAmmo();
+		ss << player->GetMagazine() << " / " << player->GetAmmo();
 		findTGo->text.setString(ss.str());
+		if (player->GetReload() == ReloadStatus::END)
+		{
+			player->SetReloadStatus(ReloadStatus::NONE);
+		}
 	}
-
-	
 }
 
 void SceneDev1::Draw(sf::RenderWindow& window)
