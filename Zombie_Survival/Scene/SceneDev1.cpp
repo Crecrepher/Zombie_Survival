@@ -13,8 +13,9 @@
 #include "Blood.h"
 #include "TextGo.h"
 #include "SpriteEffect.h"
-
-SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr)
+#include "Item.h"
+SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr),
+itemHealth(nullptr), itemAmmo(nullptr)
 {
 	//지역리소스 선언
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/player.png"));
@@ -26,6 +27,8 @@ SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr)
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/crosshair.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/blood.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/ammo_icon.png"));
+	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/ammo_pickup.png"));
+	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/health_pickup.png"));
 }
 
 SceneDev1::~SceneDev1()
@@ -50,7 +53,13 @@ void SceneDev1::Init()
 
 	player = (Player*)AddGo(new Player("graphics/player.png", "Player"));
 	player->sortLayer = 1;
+	
+	itemHealth = (Item*)AddGo(new Item("graphics/health_pickup.png", "ItemHealth"));
+	itemHealth->SetPlayer(player);
+	itemAmmo = (Item*)AddGo(new Item("graphics/ammo_pickup.png", "ItemAmmo"));
+	itemAmmo->SetPlayer(player);
 	VertexArrayGo* background = CreateBackground({ 30, 30 }, tileWorldSize, tileTexSize, "graphics/background_sheet.png");
+	
 	AddGo(background);
 	AddGo(new RectGo("Hp"));
 	AddGo(new TextGo("Score"));
@@ -59,6 +68,8 @@ void SceneDev1::Init()
 	AddGo(new TextGo("WaveNZombies"));
 	AddGo(new TextGo("Shop"));
 	AddGo(new SpriteGo("graphics/ammo_icon.png","AmmoIcon"));
+	AddGo(new SpriteGo("graphics/background.png", "ShopBack"));
+	AddGo(new SpriteGo("graphics/background.png", "ItemAmmo"));
 	AddGo(new SpriteGo("graphics/background.png", "ShopBack"));
 	for (auto go : gameObjects)
 	{
@@ -77,6 +88,8 @@ void SceneDev1::Init()
 	wallBounds.top += tileWorldSize.y;
 
 	player->SetWallBounds(wallBounds);
+
+
 
 	zombiePool.OnCreate = [this](Zombie* zombie) {
 		Zombie::Types zombieType = (Zombie::Types)Utils::RandomRange(0,Zombie::TotalTypes-1);
@@ -120,6 +133,9 @@ void SceneDev1::Enter()
 	isGameOver = false;
 	player->SetPosition(0.f,0.f);
 	padeIn = 0;
+
+	itemAmmo->SetType(Item::Types::Ammo);
+	itemHealth->SetType(Item::Types::Hp);
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetOrigin(Origins::ML);
@@ -425,6 +441,14 @@ void SceneDev1::OnDieZombie(Zombie* zombie)
 	ss << "WAVE:" << wave << "\t" << "ZOMBIES:" << zombiePool.GetUseList().size()-1;
 	findTGo->text.setString(ss.str());
 
+	if (!itemAmmo->GetSpawn())
+	{
+		itemAmmo->TryMake(zombie->GetPosition());
+	}
+	if (!itemHealth->GetSpawn())
+	{
+		itemHealth->TryMake(zombie->GetPosition());
+	}
 	RemoveGo(zombie);
 	zombiePool.Return(zombie);
 }

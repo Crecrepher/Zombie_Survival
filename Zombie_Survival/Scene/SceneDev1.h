@@ -9,14 +9,18 @@ class VertexArrayGo;
 class Zombie;
 class SpriteEffect;
 class Blood;
+class Item;
 
 class SceneDev1 : public Scene
 {
 protected:
 	Player* player;
+	Item* itemHealth;
+	Item* itemAmmo;
 	ObjectPool<Zombie> zombiePool;
 	//ObjectPool<Blood> bloodPool;
 	ObjectPool<SpriteEffect> bloodEffectPool;
+
 
 	sf::FloatRect wallBounds;
 	bool isGameOver = false;

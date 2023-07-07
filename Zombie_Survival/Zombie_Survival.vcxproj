@@ -162,6 +162,7 @@
     <ClCompile Include="GameObject\SoundGo.cpp" />
     <ClCompile Include="GameObject\TextGo.cpp" />
     <ClCompile Include="GameObject\ZSObject\Player.cpp" />
+    <ClCompile Include="GameObject\ZSObject\Item.cpp" />
     <ClCompile Include="Scene\SceneDev1.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -201,6 +202,7 @@
   <ItemGroup>
     <ClInclude Include="GameObject\ZSObject\Blood.h" />
     <ClInclude Include="GameObject\SpriteEffect.h" />
+    <ClInclude Include="GameObject\ZSObject\Item.h" />
     <ClInclude Include="Universial\ObjectPool.h" />
     <ClInclude Include="GameObject\ZSObject\Bullet.h" />
     <ClInclude Include="GameObject\CirGo.h" />

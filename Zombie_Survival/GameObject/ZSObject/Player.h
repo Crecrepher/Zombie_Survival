@@ -49,5 +49,8 @@ public:
 
 	void OnHitted(int damdge);
 	void OnDie();
+
+	void ItemHealEat(int hp) { this->hp += hp; }
+	void ItemAmmoEat(int ammo) { this->ammo += ammo; }
 };
 
