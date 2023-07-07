@@ -63,7 +63,7 @@ void SceneTitile::Enter()
 
 	findSGo = (SpriteGo*)FindGo("Back");
 	findSGo->SetOrigin(Origins::TL);
-	findSGo->SetSize(0.7, 0.7);
+	findSGo->SetSize(FRAMEWORK.GetWindowSize().x / 1920.f, FRAMEWORK.GetWindowSize().y / 1080.f);
 	findSGo->SetPosition(0, 0);
 
 	TextGo* findTGo = (TextGo*)FindGo("Text");

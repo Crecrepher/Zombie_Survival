@@ -27,6 +27,10 @@ public:
 	/*static int Clamp(int v, int min, int max);*/
 	static float Clamp(float v, float min, float max);
 	static sf::Vector2f Clamp(const sf::Vector2f& v, const sf::Vector2f& min, const sf::Vector2f& max);
+	static float Lerp(float a, float b, float t, bool clamping = true);
+	static sf::Vector2f Lerp(const sf::Vector2f a, const sf::Vector2f b, float t, bool clamping = true);
+	static sf::Color Lerp(const sf::Color& a, const sf::Color& b, float t, bool clamping = true);
+
 	// Vector2
 	static float SqrMagnitude(const sf::Vector2f& vec);
 	static float Magnitude(const sf::Vector2f& vec);

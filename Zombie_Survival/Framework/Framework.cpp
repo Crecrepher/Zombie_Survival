@@ -66,7 +66,7 @@ void Framework::Run()
         sf::Time deltaTime = clock.restart();
         float dt = deltaTime.asSeconds();
 
-        INPUT_MGR.Clear();
+        INPUT_MGR.Update(dt);
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -81,7 +81,7 @@ void Framework::Run()
                 window.setMouseCursor(cursor);
                 break;
             }
-            INPUT_MGR.Update(event);
+            INPUT_MGR.UpdateEvent(event);
         }
 
         if (window.isOpen())

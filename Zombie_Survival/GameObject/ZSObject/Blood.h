@@ -5,7 +5,7 @@
 class Blood : public SpriteGo
 {
 protected:
-	float timer = 100;
+	float timer = 10;
 public:
 	ObjectPool<Blood>* pool;
 	Blood(const std::string id = "", const std::string n = "");

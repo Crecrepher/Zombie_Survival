@@ -1,6 +1,7 @@
 #pragma once
 #include "Singleton.h"
 #include "SoundGo.h"
+#include "Scene.h"
 
 class Scene;
 

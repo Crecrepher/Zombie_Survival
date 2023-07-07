@@ -22,7 +22,7 @@ void Blood::Reset()
 {
 	SpriteGo::Reset();
 	SetPosition(0.f, 0.f);
-	timer = 100;
+	timer = 10;
 }
 
 void Blood::Release()
@@ -33,8 +33,8 @@ void Blood::Release()
 void Blood::Update(float dt)
 {
 	SpriteGo::Update(dt);
-	timer -= dt*10;
-	sprite.setColor(sf::Color::Color(255, 255, 255, timer*2+55));
+	timer -= dt;
+	sprite.setColor(sf::Color::Color(255, 255, 255,/* timer**/25.5f));
 	if (timer<=0)
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(this);

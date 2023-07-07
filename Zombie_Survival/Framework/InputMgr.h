@@ -12,6 +12,9 @@ struct AxisInfo
 	Axis axis;
 	std::list<int> positivies;
 	std::list<int> negatives;
+
+	float sensi = 5.0f; // ¹Î°¨µµ
+	float value = 0.f;
 };
 
 class InputMgr : public Singleton<InputMgr>
@@ -31,8 +34,8 @@ private:
 	std::map<Axis, AxisInfo> axisInfoMap;
 
 public:
-	void Clear();
-	void Update(const sf::Event& ev);
+	void Update(float dt);
+	void UpdateEvent(const sf::Event& ev);
 
 	// KeyBoard
 	bool GetKeyDown(sf::Keyboard::Key key);

@@ -7,7 +7,7 @@
 #include "Zombie.h"
 
 #include <math.h>
-Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(200.f)
+Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(300.f)
 {
 }
 
@@ -69,9 +69,17 @@ void Player::Update(float dt)
 	sprite.setRotation( Utils::Angle(look));
 
 	//ÀÌµ¿
-	direction.x = INPUT_MGR.GetAxisRaw(Axis::Horizontal);
-	direction.y = INPUT_MGR.GetAxisRaw(Axis::Vertical);
+	direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
+	direction.y = INPUT_MGR.GetAxis(Axis::Vertical);
+
+	float magnitude = Utils::Magnitude(direction);
+	if (magnitude > 1.f)
+	{
+		direction /= magnitude;
+	}
+
 	position += direction * speed * dt;
+
 	if (!wallBounds.contains(position))
 	{
 		position = Utils::Clamp(position,wallBoundsLT,wallBoundsRB);

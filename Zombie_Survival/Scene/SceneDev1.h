@@ -7,15 +7,16 @@
 class Player;
 class VertexArrayGo;
 class Zombie;
+class SpriteEffect;
 class Blood;
 
 class SceneDev1 : public Scene
 {
 protected:
-
 	Player* player;
 	ObjectPool<Zombie> zombiePool;
-	ObjectPool<Blood> bloodPool;
+	//ObjectPool<Blood> bloodPool;
+	ObjectPool<SpriteEffect> bloodEffectPool;
 
 	sf::FloatRect wallBounds;
 	bool isGameOver = false;
@@ -44,9 +45,11 @@ public:
 	VertexArrayGo* CreateBackground(sf::Vector2f size, sf::Vector2f tileSize, sf::Vector2f texSize, std::string textureId);
 
 	void SpawnZombies(int count,sf::Vector2f center, float radius);
-	void ClearZombies();
+	//void ClearZombies();
 
-	void ClearBloods();
+	//void ClearBloods();
+	template <typename T>
+	void ClearObjectPool(ObjectPool<T>& pool);
 
 	void OnDieZombie(Zombie* zombie);
 	void OnDiePlayer();
@@ -54,3 +57,12 @@ public:
 	const std::list<Zombie*>* GetZombieList() const;
 };
 
+template<typename T>
+inline void SceneDev1::ClearObjectPool(ObjectPool<T>& pool)
+{
+	for (auto object : pool.GetUseList())
+	{
+		RemoveGo(object);
+	}
+	pool.Clear();
+}

@@ -12,6 +12,7 @@
 #include "RectGo.h"
 #include "Blood.h"
 #include "TextGo.h"
+#include "SpriteEffect.h"
 
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr)
 {
@@ -58,7 +59,7 @@ void SceneDev1::Init()
 	AddGo(new TextGo("WaveNZombies"));
 	AddGo(new TextGo("Shop"));
 	AddGo(new SpriteGo("graphics/ammo_icon.png","AmmoIcon"));
-	AddGo(new SpriteGo("graphics/background.png", "Back"));
+	AddGo(new SpriteGo("graphics/background.png", "ShopBack"));
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -84,18 +85,25 @@ void SceneDev1::Init()
 	};
 	zombiePool.Init();
 
-	ObjectPool<Blood>* ptr = &bloodPool;
-	bloodPool.OnCreate = [this,ptr](Blood* blood) {
-		blood->textureId = "graphics/blood.png";
-		blood->pool = ptr;
+	//bloodPool.OnCreate = [this](Blood* blood) {
+	//	blood->textureId = "graphics/blood.png";
+	//	blood->pool = &bloodPool;
+	//};
+	//bloodPool.Init();
+
+	bloodEffectPool.OnCreate = [this](SpriteEffect* effect) {
+		effect->textureId = "graphics/blood.png";
+		effect->SetDuration(3.f);
+		effect->SetPool(&bloodEffectPool);
 	};
-	bloodPool.Init();
+	bloodEffectPool.Init();
 }
 
 void SceneDev1::Release()
 {
-	bloodPool.Release();
+	//bloodPool.Release();
 	zombiePool.Release();
+	bloodEffectPool.Release();
 	for (auto go : gameObjects)
 	{
 		delete go;
@@ -109,7 +117,6 @@ void SceneDev1::Enter()
 	score = 0;
 	wave = 0;
 	pause = true;
-	/*worldView.setCenter(0.f, 0.f);*/
 	isGameOver = false;
 	player->SetPosition(0.f,0.f);
 	padeIn = 0;
@@ -166,9 +173,9 @@ void SceneDev1::Enter()
 	findSGo->SetPosition(30.f, FRAMEWORK.GetWindowSize().y - 40.f);
 	findSGo->sortLayer = 100;
 
-	findSGo = (SpriteGo*)FindGo("Back");
+	findSGo = (SpriteGo*)FindGo("ShopBack");
 	findSGo->SetOrigin(Origins::TL);
-	findSGo->SetSize(0.7, 0.7);
+	findSGo->sprite.setScale(FRAMEWORK.GetWindowSize().x/1920.f, FRAMEWORK.GetWindowSize().y / 1080.f);
 	findSGo->SetPosition(0, 0);
 	findSGo->sprite.setColor(sf::Color(255,255,255,0));
 	findSGo->sortLayer = 101;
@@ -185,8 +192,9 @@ void SceneDev1::Enter()
 
 void SceneDev1::Exit()
 {
-	ClearBloods();
-	ClearZombies();
+	//ClearBloods();
+	ClearObjectPool(bloodEffectPool);
+	ClearObjectPool(zombiePool);
 	player->Reset();
 
 	Scene::Exit();
@@ -204,7 +212,7 @@ void SceneDev1::Update(float dt)
 	if (wave > 1 && pause&& padeIn<254)
 	{
 		padeIn += dt * 100;
-		SpriteGo* findSGo = (SpriteGo*)FindGo("Back");
+		SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
 		findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
 		TextGo* findTGo = (TextGo*)FindGo("Shop");
 		findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
@@ -212,7 +220,7 @@ void SceneDev1::Update(float dt)
 	else if (wave > 1 && !pause && padeIn > 0)
 	{
 		padeIn -= dt * 300;
-		SpriteGo* findSGo = (SpriteGo*)FindGo("Back");
+		SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
 		findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
 		TextGo* findTGo = (TextGo*)FindGo("Shop");
 		findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
@@ -226,11 +234,10 @@ void SceneDev1::Update(float dt)
 			findTGo->text.setPosition(20.f, 20.f);
 			findTGo->text.setString("SCORE:0");
 			findTGo->text.setCharacterSize(60);
-
-			SpriteGo* findSGo = (SpriteGo*)FindGo("Back");
 		}
 		return;
 	}
+
 	Scene::Update(dt);
 
 	if (isGameOver)
@@ -239,20 +246,19 @@ void SceneDev1::Update(float dt)
 		return;
 	}
 	
-	
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	{
-		SpawnZombies(10, player->GetPosition(), 1000.f);
+		SpawnZombies(10+wave * 5, player->GetPosition(), 1000.f);
 		wave++;
 	}
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
 	{
-		ClearZombies();
+		ClearObjectPool(zombiePool);
 	}
 
 	if (zombiePool.GetUseList().size() == 0)
 	{
-		SpawnZombies(10, player->GetPosition(), 1000.f);
+		SpawnZombies(10+wave*5, player->GetPosition(), 1000.f);
 		wave++;
 		TextGo* findTGo = (TextGo*)FindGo("WaveNZombies");
 		std::stringstream ss; 
@@ -360,33 +366,42 @@ void SceneDev1::SpawnZombies(int count, sf::Vector2f center, float radius)
 	}
 }
 
-void SceneDev1::ClearZombies()
-{
-	for (auto zombie : zombiePool.GetUseList())
-	{
-		RemoveGo(zombie);
-	}
-	zombiePool.Clear();
-}
+//void SceneDev1::ClearZombies()
+//{
+//	for (auto zombie : zombiePool.GetUseList())
+//	{
+//		RemoveGo(zombie);
+//	}
+//	zombiePool.Clear();
+//}
 
-void SceneDev1::ClearBloods()
-{
-	for (auto blood : bloodPool.GetUseList())
-	{
-		RemoveGo(blood);
-	}
-	bloodPool.Clear();
-}
+//void SceneDev1::ClearBloods()
+//{
+//	for (auto blood : bloodPool.GetUseList())
+//	{
+//		RemoveGo(blood);
+//	}
+//	bloodPool.Clear();
+//}
 
 void SceneDev1::OnDieZombie(Zombie* zombie)
 {
-	Blood* blood = bloodPool.Get();
-	blood->SetPosition(zombie->GetPosition());
-	AddGo(blood);
-	float bloodsize = 0.5 + (1.0-((int)zombie->GetType() * 0.5));
+	//Blood* blood = bloodPool.Get();
+	//blood->SetPosition(zombie->GetPosition());
+	//AddGo(blood);
+	//float bloodsize = 0.5 + (1.0-((int)zombie->GetType() * 0.5));
+	//float rot = Utils::RandomRange(0, 270);
+	//blood->SetSize(bloodsize, bloodsize);
+	//blood->sprite.setRotation(rot);
+
+	SpriteEffect* bloodE = bloodEffectPool.Get();
+	bloodE->SetPosition(zombie->GetPosition());
+	AddGo(bloodE);
+	float bloodsize = 0.5 + (1.0 - ((int)zombie->GetType() * 0.5));
 	float rot = Utils::RandomRange(0, 270);
-	blood->SetSize(bloodsize, bloodsize);
-	blood->sprite.setRotation(rot);
+	bloodE->SetSize(bloodsize, bloodsize);
+	bloodE->sprite.setRotation(rot);
+	bloodE->sprite.setRotation(rot);
 
 	score += 20-(5*(int)zombie->GetType());
 	TextGo* findTGo = (TextGo*)FindGo("Score");
