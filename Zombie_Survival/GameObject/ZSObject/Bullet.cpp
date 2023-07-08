@@ -3,6 +3,10 @@
 #include "Zombie.h"
 #include "SceneMgr.h"
 #include "Scene.h"
+
+const int Bullet::damageStats[Gun::TotalTypes] = { 25, 25 };
+const float Bullet::rangeStats[Gun::TotalTypes] = { 400.f, 800.f };
+
 Bullet::Bullet(const std::string id, const std::string n)
 	:SpriteGo(id,n)
 {
@@ -29,6 +33,8 @@ void Bullet::Init()
 {
 	SpriteGo::Init();
 	SetOrigin(Origins::MC);
+	damage = Bullet::damageStats[(int)*gunType];
+	range = Bullet::rangeStats[(int)*gunType];
 }
 
 void Bullet::Reset()
@@ -39,7 +45,6 @@ void Bullet::Reset()
 	SetPosition(0.f, 0.f);
 	direction = { 0.f,0.f };
 	speed = 0.f;
-	range = 2000.f;
 }
 
 void Bullet::Release()
@@ -58,7 +63,7 @@ void Bullet::Update(float dt)
 		pool->Return(this);
 		return;
 	}
-
+	
 	position += direction * speed * dt;
 	sprite.setPosition(position);
 
@@ -81,4 +86,9 @@ void Bullet::Update(float dt)
 void Bullet::Draw(sf::RenderWindow& window)
 {
 	SpriteGo::Draw(window);
+}
+
+void Bullet::SetGunType(const Gun::Types* gunType)
+{
+	this->gunType = gunType;
 }

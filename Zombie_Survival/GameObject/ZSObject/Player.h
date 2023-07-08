@@ -1,16 +1,6 @@
 #pragma once
 #include "SpriteGo.h"
-#include "ObjectPool.h"
-#include "Bullet.h"
-
-class Bullet;
-
-enum class ReloadStatus
-{
-	NONE = -1,
-	START,
-	END,
-};
+#include "Gun.h"
 
 class Player :public SpriteGo
 {
@@ -29,14 +19,8 @@ protected:
 	int maxHp = 100;
 	int hp = 0;
 
-	ObjectPool<Bullet> poolBullets;
-	int maxAmmo = 900;
-	int ammo = 0;
-	int	maxMagazine = 15;
-	int magazine = 0;
-	ReloadStatus reloadStatus = ReloadStatus::NONE;
-	float reloadRate = 2.f;
-	float reloadRateTimer = 0.f;
+	std::vector<Gun*> gunArray;
+	int currentGunIndex = 0;
 public:
 
 	Player(const std::string id = "",const std::string n = "");
@@ -55,20 +39,15 @@ public:
 
 	void Ouch(float dt);
 	int GetHp();
-	const int GetAmmo() const;
-	const int GetMagazine() const;
-	const ReloadStatus GetReload() const;
-	void SetReloadStatus(ReloadStatus status);
-
-	//Ω∫≈»
-	void SetMaxHp(int hp);
-	void SetSpeed(float speed);
-	void SetMaxMagazine(int magazine);
-	void SetReloadRate(float reloadRate);
 	
 	bool isAlive = false;
 
 	void OnHitted(int damdge);
 	void OnDie();
+
+	void AddGun(Gun::Types type);
+	const ReloadStatus GetReloadStatus() const;
+	void SetReloadStatus(ReloadStatus status);
+	std::stringstream GetAmmoInfo();
 };
 

@@ -1,20 +1,26 @@
 #pragma once
 #include "SpriteGo.h"
 #include "ObjectPool.h"
-class Zombie;
+#include "Gun.h"
 
+class Zombie;
 
 class Bullet : public SpriteGo
 {
+public:
+	static const int damageStats[Gun::TotalTypes];
+	static const float rangeStats[Gun::TotalTypes];
+
 protected:
 	sf::Vector2f direction;
 	float speed = 0.f;
-	float range = 2000.f;
-	int damage = 25;
+	float range = 0.f;
+	int damage = 0;
 
 	const std::list<Zombie*>* zombies;
 
-	
+	const Gun::Types* gunType;
+
 public:
 	ObjectPool<Bullet>* pool;
 	Bullet(const std::string id = "", const std::string n = "");
@@ -29,5 +35,7 @@ public:
 
 	virtual void Update(float dt)override;
 	virtual void Draw(sf::RenderWindow& window)override;
+
+	void SetGunType(const Gun::Types* type);
 };
 
