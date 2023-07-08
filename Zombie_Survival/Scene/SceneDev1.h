@@ -49,9 +49,6 @@ public:
 	VertexArrayGo* CreateBackground(sf::Vector2f size, sf::Vector2f tileSize, sf::Vector2f texSize, std::string textureId);
 
 	void SpawnZombies(int count,sf::Vector2f center, float radius);
-	//void ClearZombies();
-
-	//void ClearBloods();
 	template <typename T>
 	void ClearObjectPool(ObjectPool<T>& pool);
 

@@ -2,6 +2,7 @@
 #include "SpriteGo.h"
 
 class Player;
+class SoundGo;
 
 class Item : public SpriteGo
 {
@@ -21,6 +22,8 @@ private:
 	float maxTime = 30.f;
 
 	Player* player = nullptr;
+	SoundGo* eatSound = nullptr;
+	SoundGo* dropSound = nullptr;
 public:
 	Item(const std::string id = "", const std::string n = "");
 	virtual ~Item() override {};
@@ -30,9 +33,12 @@ public:
 	virtual void Update(float dt)override;
 
 	void SetPlayer(Player* player) {this->player = player;}
+	void SetSound(SoundGo* eatSound, SoundGo* dropSound);
 	void SetType(Types type);
 	bool GetSpawn() const { return isSpawn; }
 	void TryMake(sf::Vector2f pos);
 	void ItemUpgrade();
+
+	
 };
 

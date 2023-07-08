@@ -4,6 +4,7 @@
 #include "Bullet.h"
 
 class Bullet;
+class SoundGo;
 
 class Player :public SpriteGo
 {
@@ -18,10 +19,12 @@ protected:
 	sf::Vector2f wallBoundsRB;
 
 	ObjectPool<Bullet> poolBullets;
+	SoundGo* hitedSound = nullptr;
 
 	int hp = 0;
 	int maxAmmo = 300;
 	int ammo = 0;
+
 public:
 	int maxHp = 100;
 	float speed;
@@ -38,8 +41,8 @@ public:
 	virtual void Draw(sf::RenderWindow& window)override;
 	
 	void SetWallBounds(const sf::FloatRect& bounds);
+	void SetSound(SoundGo* hitSound) { hitedSound = hitSound; }
 
-	void Ouch(float dt);
 	int GetHp();
 	int GetHpBarLength();
 	const int GetAmmo() const;

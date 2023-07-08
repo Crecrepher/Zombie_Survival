@@ -8,6 +8,7 @@ protected:
 	float closeTimer;
 	bool isClose;
 	int hiScore = 0;
+	bool loading;
 public:
 	SceneMenu();
 	virtual ~SceneMenu() override;

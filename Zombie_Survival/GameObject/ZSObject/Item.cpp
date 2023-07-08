@@ -28,6 +28,7 @@ void Item::Update(float dt)
 	timer -= dt;
 	if (player->sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()))
 	{
+		eatSound->sound.play();
 		switch (itemType)
 		{
 		case Item::Types::Hp:
@@ -52,6 +53,12 @@ void Item::Update(float dt)
 	}
 }
 
+void Item::SetSound(SoundGo* eatSound, SoundGo* dropSound)
+{
+	this->eatSound = eatSound; 
+	this->dropSound = dropSound;
+}
+
 void Item::SetType(Types type)
 { 
 	itemType = type;
@@ -65,6 +72,7 @@ void Item::TryMake(sf::Vector2f pos)
 {
 	if (Utils::RandomRange(luck, 1.f)>= 0.95f)
 	{
+		dropSound->sound.play();
 		SetPosition(pos);
 		isSpawn = true;
 		SetActive(true);

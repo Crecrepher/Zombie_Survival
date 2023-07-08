@@ -3,6 +3,8 @@
 #include "ObjectPool.h"
 
 class Player;
+class SoundGo;
+
 class Zombie : public SpriteGo
 {
 public:
@@ -35,7 +37,7 @@ protected:
 	float attackTimer = 0.f;
 
 	Player* player = nullptr;
-
+	SoundGo* hitedSound = nullptr;
 public:
 	Zombie(const std::string n = "");
 	virtual~Zombie()override;
@@ -51,6 +53,7 @@ public:
 	Types GetType() const;
 
 	void SetPlayer(Player* player);
+	void SetSound(SoundGo* hitSound) { hitedSound = hitSound; }
 
 	void OnHitBullet(int damage);
 };

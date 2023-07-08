@@ -4,6 +4,10 @@
 #include "Player.h"
 #include "SceneMgr.h"
 #include "SceneDev1.h"
+#include "ResourceMgr.h"
+#include "SoundGo.h"
+
+
 const std::string Zombie::textureIds[3] = {
 		"graphics/bloater.png",
 		"graphics/chaser.png",
@@ -101,6 +105,7 @@ void Zombie::SetPlayer(Player* player)
 void Zombie::OnHitBullet(int damage)
 {
 	hp -= damage;
+	hitedSound->sound.play();
 	if (hp<=0)
 	{
 		Scene* scene = SCENE_MGR.GetCurrScene(); //형변환연산자 쓰기

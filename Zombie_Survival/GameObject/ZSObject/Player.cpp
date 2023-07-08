@@ -5,7 +5,7 @@
 #include "Scene.h"
 #include "SceneDev1.h"
 #include "Zombie.h"
-
+#include "SoundGo.h"
 #include <math.h>
 Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(100.f)
 {
@@ -40,7 +40,7 @@ void Player::Reset()
 	maxHp = 100;
 	hp = maxHp;
 	isAlive = true;
-	speed = 10.f;
+	speed = 100.f;
 
 	for (auto bullet : poolBullets.GetUseList())
 	{
@@ -125,16 +125,6 @@ void Player::SetWallBounds(const sf::FloatRect& bounds)
 	wallBoundsRB = { wallBounds.left + wallBounds.width,wallBounds.top + wallBounds.height };
 }
 
-void Player::Ouch(float dt)
-{
-	if (invincibility <=0)
-	{
-		hp -= 5;
-		invincibility = 25;
-		sprite.setColor(sf::Color::Color(205, 12, 34));
-	}
-}
-
 int Player::GetHp()
 {
 	return hp;
@@ -152,6 +142,7 @@ const int Player::GetAmmo() const
 
 void Player::OnHitted(int damdge)
 {
+	hitedSound->sound.play();
 	if (!isAlive)
 	{
 		return;

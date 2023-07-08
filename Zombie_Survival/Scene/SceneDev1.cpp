@@ -14,6 +14,7 @@
 #include "TextGo.h"
 #include "SpriteEffect.h"
 #include "Item.h"
+#include "SoundGo.h"
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1), player(nullptr),
 itemHealth(nullptr), itemAmmo(nullptr)
 {
@@ -29,6 +30,14 @@ itemHealth(nullptr), itemAmmo(nullptr)
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/ammo_icon.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/ammo_pickup.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/health_pickup.png"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/hit.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/pickup.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/splat.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/powerup.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/shoot.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/zombie_die.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/player_hit.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/bgm.wav"));
 }
 
 SceneDev1::~SceneDev1()
@@ -69,11 +78,22 @@ void SceneDev1::Init()
 	AddGo(new TextGo("Shop"));
 	AddGo(new SpriteGo("graphics/ammo_icon.png","AmmoIcon"));
 	AddGo(new SpriteGo("graphics/background.png", "ShopBack"));
+	AddGo(new SoundGo("BulletToZombieHit"));
+	AddGo(new SoundGo("ItemGet"));
+	AddGo(new SoundGo("ItemDrop"));
+	AddGo(new SoundGo("ShopIn"));
+	AddGo(new SoundGo("PowerUp"));
+	AddGo(new SoundGo("Shoot"));
+	AddGo(new SoundGo("ZombieDie"));
+	AddGo(new SoundGo("ZombieToPlayerHit"));
+	AddGo(new SoundGo("Bgm"));
 	for (auto go : gameObjects)
 	{
 		go->Init();
 	}
 
+	itemHealth->SetSound((SoundGo*)FindGo("ItemGet"), (SoundGo*)FindGo("ItemDrop"));
+	itemAmmo->SetSound((SoundGo*)FindGo("ItemGet"), (SoundGo*)FindGo("ItemDrop"));
 
 	background->SetOrigin(Origins::MC);
 	background->SetPosition(0.f, 0.f);
@@ -86,13 +106,14 @@ void SceneDev1::Init()
 	wallBounds.top += tileWorldSize.y;
 
 	player->SetWallBounds(wallBounds);
-
+	player->SetSound((SoundGo*)FindGo("ZombieToPlayerHit"));
 
 
 	zombiePool.OnCreate = [this](Zombie* zombie) {
 		Zombie::Types zombieType = (Zombie::Types)Utils::RandomRange(0,Zombie::TotalTypes-1);
 		zombie->SetType(zombieType);
 		zombie->SetPlayer(player);
+		zombie->SetSound((SoundGo*)FindGo("BulletToZombieHit"));
 	};
 	zombiePool.Init();
 
@@ -125,9 +146,36 @@ void SceneDev1::Enter()
 	player->SetPosition(0.f,0.f);
 	padeIn = 0;
 
+	SoundGo* findSound = (SoundGo*)FindGo("BulletToZombieHit");
+	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/hit.wav"));
+
+	findSound = (SoundGo*)FindGo("ItemGet");
+	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/pickup.wav"));
+
+	findSound = (SoundGo*)FindGo("ItemDrop");
+	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/splat.wav"));
+
+	findSound = (SoundGo*)FindGo("ShopIn");
+	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/select.wav"));
+	findSound = (SoundGo*)FindGo("PowerUp");
+	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/powerup.wav"));
+
+	findSound = (SoundGo*)FindGo("Shoot");
+	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/shoot.wav"));
+
+	findSound = (SoundGo*)FindGo("ZombieDie");
+	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/zombie_die.wav"));
+
+	findSound = (SoundGo*)FindGo("ZombieToPlayerHit");
+	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/player_hit.wav"));
+
+	findSound = (SoundGo*)FindGo("Bgm");
+	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/bgm.wav"));
+	findSound->sound.setLoop(true);
+
 	itemAmmo->SetType(Item::Types::Ammo);
 	itemHealth->SetType(Item::Types::Hp);
-
+	
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetOrigin(Origins::ML);
 	hp->rectangle.setFillColor(sf::Color::Red);
@@ -237,12 +285,16 @@ void SceneDev1::Update(float dt)
 			findTGo->text.setPosition(20.f, 20.f);
 			findTGo->text.setString("SCORE:0");
 			findTGo->text.setCharacterSize(60);
+			SoundGo* findSound = (SoundGo*)FindGo("Bgm");
+			findSound->sound.play();
 		}
 		return;
 	}
 	else if (wave > 1 && !pause && padeIn > 0)
 	{
 		padeIn -= dt * 300;
+		SoundGo* findSound = (SoundGo*)FindGo("Bgm");
+		findSound->sound.setVolume(100);
 		SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
 		findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
 		TextGo* findTGo = (TextGo*)FindGo("Shop");
@@ -276,6 +328,13 @@ void SceneDev1::Update(float dt)
 		std::stringstream ss; 
 		ss << "WAVE:" << wave << "\t" << "ZOMBIES:" << zombiePool.GetUseList().size();
 		findTGo->text.setString(ss.str());
+		SoundGo* findSound = (SoundGo*)FindGo("ShopIn");
+		findSound->sound.play();
+		findSound = (SoundGo*)FindGo("Bgm");
+		if (wave > 1)
+		{
+			findSound->sound.setVolume(20);
+		}
 		if (wave>1)
 		{
 			pause = true;
@@ -284,10 +343,10 @@ void SceneDev1::Update(float dt)
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetSize({ player->GetHpBarLength() * 3.f, 30.f });
-	std::cout << player->GetHpBarLength() << std::endl;
-	std::cout << player->GetHp() << std::endl;
 	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Button::Left))
 	{
+		SoundGo* findSound = (SoundGo*)FindGo("Shoot");
+		findSound->sound.play();
 		AmmoUiUpdate();
 	}
 
@@ -377,6 +436,9 @@ void SceneDev1::SpawnZombies(int count, sf::Vector2f center, float radius)
 }
 void SceneDev1::OnDieZombie(Zombie* zombie)
 {
+	SoundGo* findSound = (SoundGo*)FindGo("ZombieDie");
+	findSound->sound.play();
+
 	SpriteEffect* bloodE = bloodEffectPool.Get();
 	bloodE->SetPosition(zombie->GetPosition());
 	AddGo(bloodE);
@@ -432,34 +494,41 @@ const std::list<Zombie*>* SceneDev1::GetZombieList() const
 
 void SceneDev1::Shop()
 {
+	SoundGo* findSound = (SoundGo*)FindGo("PowerUp");
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	{
 
+		findSound->sound.play();
 		pause = false;
 	}
 	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
 	{
 
+		findSound->sound.play();
 		pause = false;
 	}
 	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num3))
 	{
 		player->HealthUp();
+		findSound->sound.play();
 		pause = false;
 	}
 	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num4))
 	{
 		player->SpeedUp();
+		findSound->sound.play();
 		pause = false;
 	}
 	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num5))
 	{
 		itemHealth->ItemUpgrade();
+		findSound->sound.play();
 		pause = false;
 	}
 	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num6))
 	{
 		itemAmmo->ItemUpgrade();
+		findSound->sound.play();
 		pause = false;
 	}
 }
