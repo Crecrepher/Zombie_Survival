@@ -59,6 +59,10 @@ public:
 	void OnDiePlayer();
 
 	const std::list<Zombie*>* GetZombieList() const;
+	bool IsItemSpawn();
+	void AmmoUiUpdate();
+
+	void Shop();
 };
 
 template<typename T>

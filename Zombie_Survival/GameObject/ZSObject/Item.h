@@ -30,8 +30,9 @@ public:
 	virtual void Update(float dt)override;
 
 	void SetPlayer(Player* player) {this->player = player;}
-	void SetType(Types type) { itemType = type; }
+	void SetType(Types type);
 	bool GetSpawn() const { return isSpawn; }
 	void TryMake(sf::Vector2f pos);
+	void ItemUpgrade();
 };
 

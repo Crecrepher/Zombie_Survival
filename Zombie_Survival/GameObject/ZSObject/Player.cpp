@@ -7,7 +7,7 @@
 #include "Zombie.h"
 
 #include <math.h>
-Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(300.f)
+Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(100.f)
 {
 }
 
@@ -37,9 +37,10 @@ void Player::Init()
 void Player::Reset()
 {
 	SpriteGo::Reset();
-
+	maxHp = 100;
 	hp = maxHp;
 	isAlive = true;
+	speed = 10.f;
 
 	for (auto bullet : poolBullets.GetUseList())
 	{
@@ -139,6 +140,11 @@ int Player::GetHp()
 	return hp;
 }
 
+int Player::GetHpBarLength()
+{
+	return hp * 100/maxHp;
+}
+
 const int Player::GetAmmo() const
 {
 	return ammo;
@@ -169,4 +175,9 @@ void Player::OnDie()
 	{
 		sceneDev1->OnDiePlayer();
 	}
+}
+
+void Player::ItemHealEat(int hp) 
+{
+	this->hp = std::min(this->hp+hp, maxHp);
 }

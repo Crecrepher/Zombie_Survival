@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "Item.h"
 #include "Player.h"
-
+#include "SceneDev1.h"
+#include "SceneMgr.h"
 Item::Item(const std::string id, const std::string n)
 	:SpriteGo(id,n)
 {
@@ -17,6 +18,8 @@ void Item::Init()
 void Item::Reset()
 {
 	SpriteGo::Reset();
+	luck = 0.0;
+	ability = 5;
 }
 
 void Item::Update(float dt)
@@ -32,6 +35,11 @@ void Item::Update(float dt)
 			break;
 		case Item::Types::Ammo:
 			player->ItemAmmoEat(10+ability*2);
+			SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(SCENE_MGR.GetCurrScene());
+			if (sceneDev1 != nullptr)
+			{
+				sceneDev1->AmmoUiUpdate();
+			}
 			break;
 		}
 		isSpawn = false;
@@ -44,14 +52,31 @@ void Item::Update(float dt)
 	}
 }
 
+void Item::SetType(Types type)
+{ 
+	itemType = type;
+	if (type ==Types::Ammo)
+	{
+		luck += 0.1f;
+	}
+}
+
 void Item::TryMake(sf::Vector2f pos)
 {
-	if (/*Utils::RandomRange(luck, 1.f)*/ 1>= 0.95f)
+	if (Utils::RandomRange(luck, 1.f)>= 0.95f)
 	{
 		SetPosition(pos);
 		isSpawn = true;
 		SetActive(true);
 		timer = maxTime;
 	}
+}
 
+void Item::ItemUpgrade() 
+{
+	if (luck < 0.8f)
+	{
+		luck += 0.05;
+	}
+	ability += 5;
 }

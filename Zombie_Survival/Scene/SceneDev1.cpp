@@ -69,8 +69,6 @@ void SceneDev1::Init()
 	AddGo(new TextGo("Shop"));
 	AddGo(new SpriteGo("graphics/ammo_icon.png","AmmoIcon"));
 	AddGo(new SpriteGo("graphics/background.png", "ShopBack"));
-	AddGo(new SpriteGo("graphics/background.png", "ItemAmmo"));
-	AddGo(new SpriteGo("graphics/background.png", "ShopBack"));
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -98,12 +96,6 @@ void SceneDev1::Init()
 	};
 	zombiePool.Init();
 
-	//bloodPool.OnCreate = [this](Blood* blood) {
-	//	blood->textureId = "graphics/blood.png";
-	//	blood->pool = &bloodPool;
-	//};
-	//bloodPool.Init();
-
 	bloodEffectPool.OnCreate = [this](SpriteEffect* effect) {
 		effect->textureId = "graphics/blood.png";
 		effect->SetDuration(3.f);
@@ -114,7 +106,6 @@ void SceneDev1::Init()
 
 void SceneDev1::Release()
 {
-	//bloodPool.Release();
 	zombiePool.Release();
 	bloodEffectPool.Release();
 	for (auto go : gameObjects)
@@ -198,7 +189,7 @@ void SceneDev1::Enter()
 
 	findTGo = (TextGo*)FindGo("Shop");
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
-	findTGo->text.setString("\n\n1- SHOP SAMPLE 1\n2- SHOP SAMPLE 2\n3- SHOP SAMPLE 3");
+	findTGo->text.setString("\n\n1- INCREASED RATE OF FIRE\n2- INCREASED CLIP SIZE 2\n3- INCREASED MAX HEALTH\n4- INCREASED RUN SPEED\n5- MORE AND BETTER HEALTH PICKUPS\n6- MORE AND BETTER AMMO PICKUPS");
 	findTGo->text.setCharacterSize(60);
 	findTGo->text.setFillColor(sf::Color(255, 255, 255, 0));
 	Utils::SetOrigin(findTGo->text, Origins::TL);
@@ -208,11 +199,11 @@ void SceneDev1::Enter()
 
 void SceneDev1::Exit()
 {
-	//ClearBloods();
 	ClearObjectPool(bloodEffectPool);
 	ClearObjectPool(zombiePool);
 	player->Reset();
-
+	itemAmmo->Reset();
+	itemHealth->Reset();
 	Scene::Exit();
 }
 
@@ -225,25 +216,21 @@ void SceneDev1::Update(float dt)
 	}
 	worldView.setCenter(player->GetPosition());
 
-	if (wave > 1 && pause&& padeIn<254)
-	{
-		padeIn += dt * 100;
-		SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
-		findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
-		TextGo* findTGo = (TextGo*)FindGo("Shop");
-		findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
-	}
-	else if (wave > 1 && !pause && padeIn > 0)
-	{
-		padeIn -= dt * 300;
-		SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
-		findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
-		TextGo* findTGo = (TextGo*)FindGo("Shop");
-		findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
-	}
 	if (pause)
 	{
-		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Enter))
+		if (wave > 1 && pause)
+		{
+			Shop();
+			if (padeIn < 254)
+			{
+				padeIn += dt * 100;
+				SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
+				findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
+				TextGo* findTGo = (TextGo*)FindGo("Shop");
+				findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
+			}
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Enter)&& wave < 1)
 		{
 			pause = false;
 			TextGo* findTGo = (TextGo*)FindGo("Score");
@@ -253,6 +240,15 @@ void SceneDev1::Update(float dt)
 		}
 		return;
 	}
+	else if (wave > 1 && !pause && padeIn > 0)
+	{
+		padeIn -= dt * 300;
+		SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
+		findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
+		TextGo* findTGo = (TextGo*)FindGo("Shop");
+		findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
+	}
+
 
 	Scene::Update(dt);
 
@@ -287,14 +283,12 @@ void SceneDev1::Update(float dt)
 	}
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
-	hp->SetSize({ player->GetHp() * 3.f, 30.f });
-
+	hp->SetSize({ player->GetHpBarLength() * 3.f, 30.f });
+	std::cout << player->GetHpBarLength() << std::endl;
+	std::cout << player->GetHp() << std::endl;
 	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Button::Left))
 	{
-		TextGo* findTGo = (TextGo*)FindGo("RemainAmmo");
-		std::stringstream ss;
-		ss << player->GetAmmo();
-		findTGo->text.setString(ss.str());
+		AmmoUiUpdate();
 	}
 
 	
@@ -381,35 +375,8 @@ void SceneDev1::SpawnZombies(int count, sf::Vector2f center, float radius)
 		AddGo(zombie);
 	}
 }
-
-//void SceneDev1::ClearZombies()
-//{
-//	for (auto zombie : zombiePool.GetUseList())
-//	{
-//		RemoveGo(zombie);
-//	}
-//	zombiePool.Clear();
-//}
-
-//void SceneDev1::ClearBloods()
-//{
-//	for (auto blood : bloodPool.GetUseList())
-//	{
-//		RemoveGo(blood);
-//	}
-//	bloodPool.Clear();
-//}
-
 void SceneDev1::OnDieZombie(Zombie* zombie)
 {
-	//Blood* blood = bloodPool.Get();
-	//blood->SetPosition(zombie->GetPosition());
-	//AddGo(blood);
-	//float bloodsize = 0.5 + (1.0-((int)zombie->GetType() * 0.5));
-	//float rot = Utils::RandomRange(0, 270);
-	//blood->SetSize(bloodsize, bloodsize);
-	//blood->sprite.setRotation(rot);
-
 	SpriteEffect* bloodE = bloodEffectPool.Get();
 	bloodE->SetPosition(zombie->GetPosition());
 	AddGo(bloodE);
@@ -441,11 +408,11 @@ void SceneDev1::OnDieZombie(Zombie* zombie)
 	ss << "WAVE:" << wave << "\t" << "ZOMBIES:" << zombiePool.GetUseList().size()-1;
 	findTGo->text.setString(ss.str());
 
-	if (!itemAmmo->GetSpawn())
+	if (!IsItemSpawn())
 	{
 		itemAmmo->TryMake(zombie->GetPosition());
 	}
-	if (!itemHealth->GetSpawn())
+	if (!IsItemSpawn())
 	{
 		itemHealth->TryMake(zombie->GetPosition());
 	}
@@ -461,4 +428,51 @@ void SceneDev1::OnDiePlayer()
 const std::list<Zombie*>* SceneDev1::GetZombieList() const
 {
 	return &zombiePool.GetUseList();
+}
+
+void SceneDev1::Shop()
+{
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
+	{
+
+		pause = false;
+	}
+	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
+	{
+
+		pause = false;
+	}
+	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num3))
+	{
+		player->HealthUp();
+		pause = false;
+	}
+	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num4))
+	{
+		player->SpeedUp();
+		pause = false;
+	}
+	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num5))
+	{
+		itemHealth->ItemUpgrade();
+		pause = false;
+	}
+	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num6))
+	{
+		itemAmmo->ItemUpgrade();
+		pause = false;
+	}
+}
+
+void SceneDev1::AmmoUiUpdate()
+{
+	TextGo* findTGo = (TextGo*)FindGo("RemainAmmo");
+	std::stringstream ss;
+	ss << player->GetAmmo();
+	findTGo->text.setString(ss.str());
+}
+
+inline bool SceneDev1::IsItemSpawn() 
+{
+	return itemAmmo->GetSpawn() || itemHealth->GetSpawn();
 }

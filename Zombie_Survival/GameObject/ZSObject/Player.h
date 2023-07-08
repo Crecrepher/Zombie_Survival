@@ -10,23 +10,21 @@ class Player :public SpriteGo
 protected:
 	sf::Vector2f direction;
 	sf::Vector2f look;
-	float speed;
+	
 	float invincibility = 0;
-	sf::Vector2f mapTop;//
-	sf::Vector2f mapBot;//
 
 	sf::FloatRect wallBounds;
 	sf::Vector2f wallBoundsLT;
 	sf::Vector2f wallBoundsRB;
 
-	int maxHp = 100;
-	int hp = 0;
-
 	ObjectPool<Bullet> poolBullets;
-	int maxAmmo = 900;
+
+	int hp = 0;
+	int maxAmmo = 300;
 	int ammo = 0;
 public:
-
+	int maxHp = 100;
+	float speed;
 	Player(const std::string id = "",const std::string n = "");
 
 	virtual void SetPosition(float x, float y)override;
@@ -43,6 +41,7 @@ public:
 
 	void Ouch(float dt);
 	int GetHp();
+	int GetHpBarLength();
 	const int GetAmmo() const;
 
 	bool isAlive = false;
@@ -50,7 +49,9 @@ public:
 	void OnHitted(int damdge);
 	void OnDie();
 
-	void ItemHealEat(int hp) { this->hp += hp; }
+	void ItemHealEat(int hp);
 	void ItemAmmoEat(int ammo) { this->ammo += ammo; }
+	void HealthUp() { maxHp += 20; ItemHealEat(20);}
+	void SpeedUp() { speed += 30; }
 };
 
