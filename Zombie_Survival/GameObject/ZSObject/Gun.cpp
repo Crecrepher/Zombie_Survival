@@ -2,7 +2,7 @@
 #include "Gun.h"
 #include "InputMgr.h"
 #include "SceneMgr.h"
-#include "SceneDev1.h"
+#include "SceneGame.h"
 #include "Bullet.h"
 #include "SoundGo.h"
 
@@ -12,14 +12,13 @@ const float Gun::reloadRateStats[TotalTypes] = { 2.0f, 3.0f };
 const float Gun::fireRateStats[TotalTypes] = { 0.3f, 0.1f };
 
 Gun::Gun(const std::string id, const std::string n)
-	:SpriteGo(id, n)
+	:GameObject(n)
 {
 
 }
 
 void Gun::Init()
 {
-	SpriteGo::Init();
 	maxAmmo = Gun::ammoStats[(int)gunType];
 	maxMagazine = Gun::magazineStats[(int)gunType];
 	reloadRate = Gun::reloadRateStats[(int)gunType];
@@ -36,7 +35,6 @@ void Gun::Init()
 
 void Gun::Reset()
 {
-	SpriteGo::Reset();
 	for (auto bullet : poolBullets.GetUseList())
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(bullet);
@@ -52,13 +50,11 @@ void Gun::Reset()
 
 void Gun::Release()
 {
-	SpriteGo::Release();
 	poolBullets.Release();
 }
 
 void Gun::Update(float dt)
 {
-	SpriteGo::Update(dt);
 	if (fireTimer > 0.f)
 	{
 		fireTimer -= dt;
@@ -76,6 +72,10 @@ void Gun::Update(float dt)
 			reloadSound->Play();
 		}
 	}
+}
+
+void Gun::Draw(sf::RenderWindow& window)
+{
 }
 
 void Gun::Shoot(const sf::Vector2f& position, const sf::Vector2f& look, float dt)
@@ -96,11 +96,11 @@ void Gun::Shoot(const sf::Vector2f& position, const sf::Vector2f& look, float dt
 	magazine--;
 
 	Scene* scene = SCENE_MGR.GetCurrScene();
-	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
-	if (sceneDev1 != nullptr)
+	SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+	if (sceneGame != nullptr)
 	{
-		bullet->SetZombieList(sceneDev1->GetZombieList());
-		sceneDev1->AddGo(bullet);
+		bullet->SetZombieList(sceneGame->GetZombieList());
+		sceneGame->AddGo(bullet);
 	}
 
 	if (magazine == 0)

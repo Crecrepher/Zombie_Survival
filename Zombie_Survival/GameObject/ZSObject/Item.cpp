@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Item.h"
 #include "Player.h"
-#include "SceneDev1.h"
+#include "SceneGame.h"
 #include "SceneMgr.h"
 Item::Item(const std::string id, const std::string n)
 	:SpriteGo(id,n)
@@ -36,10 +36,10 @@ void Item::Update(float dt)
 			break;
 		case Item::Types::Ammo:
 			player->ItemAmmoEat(10+ability*2);
-			SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(SCENE_MGR.GetCurrScene());
-			if (sceneDev1 != nullptr)
+			SceneGame* sceneGame = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrScene());
+			if (sceneGame != nullptr)
 			{
-				sceneDev1->AmmoUiUpdate();
+				sceneGame->AmmoUiUpdate();
 			}
 			break;
 		}

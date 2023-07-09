@@ -83,6 +83,7 @@ void SceneMenu::Enter()
 	findSGo->SetOrigin(Origins::TL);
 	findSGo->SetSize(FRAMEWORK.GetWindowSize().x / 1920.f, FRAMEWORK.GetWindowSize().y / 1080.f);
 	findSGo->SetPosition(0, 0);
+	findSGo->sortLayer = 0;
 
 	findSGo = (SpriteGo*)FindGo("Menu1");
 	findSGo->SetOrigin(Origins::MC);
@@ -132,7 +133,7 @@ void SceneMenu::Update(float dt)
 	Scene::Update(dt);
 	if (loading)
 	{
-		SCENE_MGR.ChangeScene(SceneId::Dev1);
+		SCENE_MGR.ChangeScene(SceneId::Game);
 	}
 	//아이콘 애니메이션
 	EffectGo* findGo = (EffectGo*)FindGo("Icon");

@@ -3,7 +3,7 @@
 #include "InputMgr.h"
 #include "SceneMgr.h"
 #include "Scene.h"
-#include "SceneDev1.h"
+#include "SceneGame.h"
 #include "Zombie.h"
 #include "Gun.h"
 #include "SoundGo.h"
@@ -114,13 +114,9 @@ void Player::Update(float dt)
 	}
 
 	//무기 변경
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Q))
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Tab))
 	{
-		currentGunIndex = 0;
-	}
-	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::E))
-	{
-		currentGunIndex = 1;
+		currentGunIndex = abs(currentGunIndex-1);
 	}
 
 	gunArray[currentGunIndex]->Update(dt);
@@ -206,10 +202,10 @@ void Player::OnDie()
 {
 	isAlive = false;
 
-	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(SCENE_MGR.GetCurrScene());
-	if (sceneDev1 != nullptr)
+	SceneGame* sceneGame = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrScene());
+	if (sceneGame != nullptr)
 	{
-		sceneDev1->OnDiePlayer();
+		sceneGame->OnDiePlayer();
 	}
 }
 

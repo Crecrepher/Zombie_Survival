@@ -12,7 +12,7 @@ enum class ReloadStatus
 	END,
 };
 
-class Gun : public SpriteGo
+class Gun : public GameObject
 {
 public:
 	enum class Types
@@ -56,6 +56,7 @@ public:
 	virtual void Reset() override;
 	virtual void Release() override;
 	virtual void Update(float dt)override;
+	virtual void Draw(sf::RenderWindow& window)override;
 
 	const int GetAmmo() const;
 	const int GetMagazine() const;

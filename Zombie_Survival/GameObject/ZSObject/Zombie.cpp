@@ -3,7 +3,7 @@
 #include "InputMgr.h"
 #include "Player.h"
 #include "SceneMgr.h"
-#include "SceneDev1.h"
+#include "SceneGame.h"
 #include "ResourceMgr.h"
 #include "SoundGo.h"
 
@@ -109,10 +109,10 @@ void Zombie::OnHitBullet(int damage)
 	if (hp<=0)
 	{
 		Scene* scene = SCENE_MGR.GetCurrScene(); //형변환연산자 쓰기
-		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
-		if (sceneDev1 != nullptr)
+		SceneGame* sceneGame = dynamic_cast<SceneGame*>(scene);
+		if (sceneGame != nullptr)
 		{
-			sceneDev1->OnDieZombie(this);
+			sceneGame->OnDieZombie(this);
 		}
 	}
 }

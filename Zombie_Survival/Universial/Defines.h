@@ -12,8 +12,6 @@ enum class SceneId
 	Title,
 	Menu,
 	Game,
-	Dev1,
-	Dev2,
 	Count
 };
 
