@@ -46,6 +46,7 @@ public:
 	void OnDie();
 
 	void AddGun(Gun::Types type);
+	const float GetReloadTimer() const;
 	const ReloadStatus GetReloadStatus() const;
 	void SetReloadStatus(ReloadStatus status);
 	std::stringstream GetAmmoInfo();

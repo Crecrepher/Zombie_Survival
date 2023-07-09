@@ -39,10 +39,10 @@ protected:
 	
 	ReloadStatus reloadStatus = ReloadStatus::NONE;
 	float reloadRate = 0.f;
-	float reloadRateTimer = 0.f;
+	float reloadTimer = 0.f;
 
 	float fireRate = 0.f;
-	float fireRateTimer = 0.f;
+	float fireTimer = 0.f;
 public:
 	Gun(const std::string id = "", const std::string n = "");
 
@@ -53,6 +53,7 @@ public:
 
 	const int GetAmmo() const;
 	const int GetMagazine() const;
+	const float GetReloadTimer() const;
 	const ReloadStatus GetReloadStatus();
 
 	void SetType(Gun::Types type);

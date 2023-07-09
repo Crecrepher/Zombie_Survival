@@ -43,8 +43,9 @@ void Bullet::Reset()
 
 	sprite.setRotation(0.f);
 	SetPosition(0.f, 0.f);
-	direction = { 0.f,0.f };
+	direction = { 0.f, 0.f };
 	speed = 0.f;
+	range = Bullet::rangeStats[(int)*gunType];
 }
 
 void Bullet::Release()
@@ -57,7 +58,7 @@ void Bullet::Update(float dt)
 	SpriteGo::Update(dt);
 
 	range -= speed * dt;
-	if (range <=0.f)
+	if (range <= 0.f)
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(this);
 		pool->Return(this);

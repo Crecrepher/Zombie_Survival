@@ -10,8 +10,6 @@
 #include <math.h>
 Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(300.f)
 {
-	AddGun(Gun::Types::PISTOL);
-	AddGun(Gun::Types::RIFLE);
 }
 
 void Player::SetPosition(float x, float y)
@@ -29,6 +27,8 @@ void Player::Init()
 	SpriteGo::Init();
 	SetOrigin(Origins::MC);
 	
+	AddGun(Gun::Types::PISTOL);
+	AddGun(Gun::Types::RIFLE);
 	for (auto gun : gunArray)
 	{
 		gun->Init();
@@ -162,6 +162,11 @@ void Player::AddGun(Gun::Types type)
 	Gun* gun = new Gun;
 	gun->SetType(type);
 	gunArray.push_back(gun);
+}
+
+const float Player::GetReloadTimer() const
+{
+	return gunArray[currentGunIndex]->GetReloadTimer();
 }
 
 const ReloadStatus Player::GetReloadStatus() const

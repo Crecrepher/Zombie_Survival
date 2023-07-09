@@ -42,7 +42,7 @@ void Gun::Reset()
 	}
 	ammo = maxAmmo;
 	magazine = maxMagazine;
-	reloadRateTimer = 0.f;
+	reloadTimer = 0.f;
 	poolBullets.Clear();
 }
 
@@ -55,19 +55,19 @@ void Gun::Release()
 void Gun::Update(float dt)
 {
 	SpriteGo::Update(dt);
-	if (fireRateTimer > 0.f)
+	if (fireTimer > 0.f)
 	{
-		fireRateTimer -= dt;
+		fireTimer -= dt;
 	}
 
 	if (reloadStatus == ReloadStatus::START)
 	{
-		reloadRateTimer += dt;
-		if (reloadRateTimer >= reloadRate)
+		reloadTimer += dt;
+		if (reloadTimer >= reloadRate)
 		{
 			ammo -= maxMagazine;
 			magazine = maxMagazine;
-			reloadRateTimer = 0.f;
+			reloadTimer = 0.f;
 			reloadStatus = ReloadStatus::END;
 		}
 	}
@@ -75,14 +75,16 @@ void Gun::Update(float dt)
 
 void Gun::Shoot(const sf::Vector2f& position, const sf::Vector2f& look, float dt)
 {
-	if (magazine == 0 || fireRateTimer > 0.f)
+	if (magazine == 0 || fireTimer > 0.f)
 	{
 		return;
 	}
-	fireRateTimer = fireRate;
+	fireTimer = fireRate;
+
 	Bullet* bullet = poolBullets.Get();
 	bullet->Fire(position, look, 1000.f);
 	magazine--;
+
 	Scene* scene = SCENE_MGR.GetCurrScene();
 	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 	if (sceneDev1 != nullptr)
@@ -105,6 +107,11 @@ const int Gun::GetAmmo() const
 const int Gun::GetMagazine() const
 {
 	return magazine;
+}
+
+const float Gun::GetReloadTimer() const
+{
+	return reloadTimer;
 }
 
 void Gun::Reload()
