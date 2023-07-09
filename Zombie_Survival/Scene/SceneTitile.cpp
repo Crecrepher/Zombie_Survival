@@ -34,8 +34,8 @@ void SceneTitile::Init()
 	AddGo(new SpriteGo("graphics/background.png", "Back"));
 	AddGo(new SpriteGo("graphics/icon.png","Icon"));
 	AddGo(new TextGo("Text"));
-	AddGo(new SoundGo("Start"));
-	AddGo(new SoundGo("MoveSound"));
+	AddGo(new SoundGo("sound/win.wav","Start"));
+	AddGo(new SoundGo("sound/select.wav","MoveSound"));
 
 	for (auto go : gameObjects)
 	{
@@ -76,10 +76,7 @@ void SceneTitile::Enter()
 	findTGo->sortLayer = 1;
 
 	SoundGo* sou = (SoundGo*)FindGo("Start");
-	sou->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/win.wav"));
 	sou->sound.play();
-	sou = (SoundGo*)FindGo("MoveSound");
-	sou->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/select.wav"));
 }
 
 void SceneTitile::Exit()

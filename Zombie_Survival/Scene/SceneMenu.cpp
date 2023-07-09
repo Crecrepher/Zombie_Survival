@@ -40,9 +40,9 @@ void SceneMenu::Init()
 	AddGo(new SpriteGo("graphics/b1.png","Menu1"));
 	AddGo(new SpriteGo("graphics/b3.png","Menu3"));
 	AddGo(new RectGo("MenuSelector"));
-	AddGo(new SoundGo("MoveSound"));
-	AddGo(new SoundGo("SelectSound"));
-	AddGo(new SoundGo("ExitSound"));
+	AddGo(new SoundGo("sound/chop.wav","MoveSound"));
+	AddGo(new SoundGo("sound/select.wav","SelectSound"));
+	AddGo(new SoundGo("sound/death.wav","ExitSound"));
 	AddGo(new TextGo("HiScore"));
 	AddGo(new TextGo("Loading"));
 	for (auto go : gameObjects)
@@ -99,15 +99,6 @@ void SceneMenu::Enter()
 	findRGo->SetPosition(findSGo->GetPosition());
 	findRGo->rectangle.setFillColor(sf::Color::White);
 	findRGo->sortLayer = 2;
-
-	SoundGo* soundGo = (SoundGo*)FindGo("MoveSound");
-	soundGo->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/chop.wav"));
-	
-	soundGo = (SoundGo*)FindGo("SelectSound");
-	soundGo->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/select.wav"));
-
-	soundGo = (SoundGo*)FindGo("ExitSound");
-	soundGo->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/death.wav"));
 
 	TextGo* findTGo = (TextGo*)FindGo("HiScore");
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));

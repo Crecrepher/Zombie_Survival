@@ -37,9 +37,6 @@ void SceneMgr::Init()
 	currentSceneId = startSceneId;
 	currentScene = scenes[(int)currentSceneId];
 	currentScene->Enter();
-	//소리넣기
-	//bgm.sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/bgm.wav"));
-	//bgm.sound.setLoop(true);
 }
 
 void SceneMgr::Release()
@@ -68,12 +65,6 @@ void SceneMgr::Update(float dt)
 		timeFlip = !timeFlip;
 		timer = 0.f;
 	}
-
-	//if (bgmPlay)
-	//{
-	//	bgm.sound.play();
-	//	bgmPlay = false;
-	//}
 	currentScene->Update(dt);
 }
 

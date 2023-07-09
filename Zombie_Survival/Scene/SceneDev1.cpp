@@ -35,10 +35,12 @@ itemHealth(nullptr), itemAmmo(nullptr)
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/pickup.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/splat.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/powerup.wav"));
-	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/shoot.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/zombie_die.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/player_hit.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/bgm.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/shoot.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/reload.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/reload_failed.wav"));
 }
 
 SceneDev1::~SceneDev1()
@@ -80,15 +82,17 @@ void SceneDev1::Init()
 	AddGo(new TextGo("Shop"));
 	AddGo(new SpriteGo("graphics/ammo_icon.png","AmmoIcon"));
 	AddGo(new SpriteGo("graphics/background.png", "ShopBack"));
-	AddGo(new SoundGo("BulletToZombieHit"));
-	AddGo(new SoundGo("ItemGet"));
-	AddGo(new SoundGo("ItemDrop"));
-	AddGo(new SoundGo("ShopIn"));
-	AddGo(new SoundGo("PowerUp"));
-	AddGo(new SoundGo("Shoot"));
-	AddGo(new SoundGo("ZombieDie"));
-	AddGo(new SoundGo("ZombieToPlayerHit"));
-	AddGo(new SoundGo("Bgm"));
+	AddGo(new SoundGo("sound/hit.wav","BulletToZombieHit"));
+	AddGo(new SoundGo("sound/pickup.wav","ItemGet"));
+	AddGo(new SoundGo("sound/splat.wav","ItemDrop"));
+	AddGo(new SoundGo("sound/select.wav","ShopIn"));
+	AddGo(new SoundGo("sound/powerup.wav","PowerUp"));
+	AddGo(new SoundGo("sound/zombie_die.wav","ZombieDie"));
+	AddGo(new SoundGo("sound/player_hit.wav","ZombieToPlayerHit"));
+	AddGo(new SoundGo("sound/bgm.wav","Bgm"));
+	AddGo(new SoundGo("sound/shoot.wav", "SShoot"));
+	AddGo(new SoundGo("sound/reload.wav", "SReload"));
+	AddGo(new SoundGo("sound/reload_failed.wav", "SReloadFail"));
 
 	for (auto go : gameObjects)
 	{
@@ -110,6 +114,9 @@ void SceneDev1::Init()
 
 	player->SetWallBounds(wallBounds);
 	player->SetSound((SoundGo*)FindGo("ZombieToPlayerHit"));
+	player->SetGunSound((SoundGo*)FindGo("SShoot"),
+		(SoundGo*)FindGo("SReloadFail"),
+		(SoundGo*)FindGo("SReload"));
 
 	zombiePool.OnCreate = [this](Zombie* zombie) {
 		Zombie::Types zombieType = (Zombie::Types)Utils::RandomRange(0,Zombie::TotalTypes-1);
@@ -148,37 +155,12 @@ void SceneDev1::Enter()
 	player->SetPosition(0.f,0.f);
 	padeIn = 0;
 
-	SoundGo* findSound = (SoundGo*)FindGo("BulletToZombieHit");
-	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/hit.wav"));
-
-	findSound = (SoundGo*)FindGo("ItemGet");
-	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/pickup.wav"));
-
-	findSound = (SoundGo*)FindGo("ItemDrop");
-	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/splat.wav"));
-
-	findSound = (SoundGo*)FindGo("ShopIn");
-	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/select.wav"));
-	findSound = (SoundGo*)FindGo("PowerUp");
-	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/powerup.wav"));
-
-	findSound = (SoundGo*)FindGo("Shoot");
-	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/shoot.wav"));
-
-	findSound = (SoundGo*)FindGo("ZombieDie");
-	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/zombie_die.wav"));
-
-	findSound = (SoundGo*)FindGo("ZombieToPlayerHit");
-	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/player_hit.wav"));
-
-	findSound = (SoundGo*)FindGo("Bgm");
-	findSound->sound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sound/bgm.wav"));
-	findSound->sound.setLoop(true);
-
 	itemAmmo->SetType(Item::Types::Ammo);
 	itemAmmo->sortOrder = -2;
+	itemAmmo->SetActive(false);
 	itemHealth->SetType(Item::Types::Hp);
-	itemAmmo->sortOrder = -1;
+	itemHealth->sortOrder = -1;
+	itemHealth->SetActive(false);
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetOrigin(Origins::ML);
@@ -187,9 +169,8 @@ void SceneDev1::Enter()
 	hp->sortLayer = 100;
 
 	RectGo* reload = (RectGo*)FindGo("Reload");
-	reload->SetOrigin(Origins::MC);
 	reload->rectangle.setFillColor(sf::Color::Blue);
-	reload->sortLayer = 100;
+	reload->sortLayer = 5;
 	reload->SetActive(false);
 
 	TextGo* findTGo = (TextGo*)FindGo("Score");
@@ -315,17 +296,19 @@ void SceneDev1::Update(float dt)
 		INPUT_MGR.GetKeyDown(sf::Keyboard::E);
 	if (ammoUiUpdateCheck || player->GetReloadStatus() != ReloadStatus::NONE)
 	{
-		RectGo* reload = (RectGo*)FindGo("Reload");
-		reload->SetActive(true);
-		reload->SetSize({ player->GetReloadTimer() * 30.f, 5.f});
-		reload->SetPosition(player->GetPosition().x, player->GetPosition().y + 10.f);
-
-		//SoundGo* findSound = (SoundGo*)FindGo("Shoot");
-		//findSound->sound.play();
+		if (player->GetReloadStatus() == ReloadStatus::START)
+		{
+			RectGo* reload = (RectGo*)FindGo("Reload");
+			reload->SetActive(true);
+			reload->SetSize({ player->GetReloadTimer() * 30.f, 5.f });
+			reload->SetOrigin(Origins::MC);
+			reload->SetPosition(player->GetPosition().x, player->GetPosition().y + 15.f);
+		}
 		AmmoUiUpdate();
 
 		if (player->GetReloadStatus() == ReloadStatus::END)
 		{
+			RectGo* reload = (RectGo*)FindGo("Reload");
 			reload->SetActive(false);
 			player->SetReloadStatus(ReloadStatus::NONE);
 		}
@@ -487,13 +470,13 @@ void SceneDev1::Shop(float dt)
 	SoundGo* findSound = (SoundGo*)FindGo("PowerUp");
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	{
-
+		player->GunUp(1);
 		findSound->sound.play();
 		pause = false;
 	}
 	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
 	{
-
+		player->GunUp(2);
 		findSound->sound.play();
 		pause = false;
 	}

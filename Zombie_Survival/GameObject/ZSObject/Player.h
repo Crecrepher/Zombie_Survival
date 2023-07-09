@@ -24,6 +24,7 @@ protected:
 	SoundGo* hitedSound = nullptr;
 
 public:
+
 	float speed;
 	Player(const std::string id = "",const std::string n = "");
 
@@ -42,7 +43,6 @@ public:
 
 	int GetHp();
 	int GetHpBarLength();
-	const int GetAmmo() const;
 	bool isAlive = false;
 
 	void OnHitted(int damdge);
@@ -52,13 +52,15 @@ public:
 	void AddGun(Gun::Types type);
 	const float GetReloadTimer() const;
 	const ReloadStatus GetReloadStatus() const;
-	void SetReloadStatus(ReloadStatus status);
 	std::stringstream GetAmmoInfo();
 
+	void SetReloadStatus(ReloadStatus status);
+	void SetGunSound(SoundGo* shootSound, SoundGo* shootFailSound, SoundGo* reloadSound);
+
 	void ItemHealEat(int hp);
-	void ItemAmmoEat(int ammo) { gunArray[0]->ammo += ammo; }
+	void ItemAmmoEat(int ammo) { gunArray[0]->ammo += ammo; gunArray[1]->ammo += ammo/2; }
 	void HealthUp() { maxHp += 20; ItemHealEat(20);}
 	void SpeedUp() { speed += 30; }
-
+	void GunUp(int upCase);
 };
 

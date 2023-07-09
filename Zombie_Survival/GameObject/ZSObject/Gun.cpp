@@ -4,8 +4,9 @@
 #include "SceneMgr.h"
 #include "SceneDev1.h"
 #include "Bullet.h"
+#include "SoundGo.h"
 
-const int Gun::ammoStats[TotalTypes] = { 300, 900 };
+const int Gun::ammoStats[TotalTypes] = { 300, 0 };
 const int Gun::magazineStats[TotalTypes] = { 15, 30 };
 const float Gun::reloadRateStats[TotalTypes] = { 2.0f, 3.0f };
 const float Gun::fireRateStats[TotalTypes] = { 0.3f, 0.1f };
@@ -43,6 +44,9 @@ void Gun::Reset()
 	ammo = maxAmmo;
 	magazine = maxMagazine;
 	reloadTimer = 0.f;
+	maxMagazine = Gun::magazineStats[(int)gunType];
+	reloadRate = Gun::reloadRateStats[(int)gunType];
+	fireRate = Gun::fireRateStats[(int)gunType];
 	poolBullets.Clear();
 }
 
@@ -65,10 +69,11 @@ void Gun::Update(float dt)
 		reloadTimer += dt;
 		if (reloadTimer >= reloadRate)
 		{
-			ammo -= maxMagazine;
-			magazine = maxMagazine;
+			magazine = std::min(ammo, maxMagazine);
+			ammo -= magazine;
 			reloadTimer = 0.f;
 			reloadStatus = ReloadStatus::END;
+			reloadSound->Play();
 		}
 	}
 }
@@ -77,8 +82,13 @@ void Gun::Shoot(const sf::Vector2f& position, const sf::Vector2f& look, float dt
 {
 	if (magazine == 0 || fireTimer > 0.f)
 	{
+		if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
+		{
+			shootFailSound->Play();
+		}
 		return;
 	}
+	shootSound->Play();
 	fireTimer = fireRate;
 
 	Bullet* bullet = poolBullets.Get();
@@ -111,18 +121,19 @@ const int Gun::GetMagazine() const
 
 const float Gun::GetReloadTimer() const
 {
-	return reloadTimer;
+	return 1-reloadTimer/reloadRate;
 }
 
 void Gun::Reload()
 {
 	if (magazine == maxMagazine)
 	{
+		shootFailSound->Play();
 		return;
 	}
 	if (reloadStatus != ReloadStatus::START)
 	{
-		ammo += magazine;
+		reloadSound->Play();
 		magazine = 0;
 		reloadStatus = ReloadStatus::START;
 	}
@@ -141,4 +152,22 @@ void Gun::SetType(Gun::Types type)
 void Gun::SetReloadStatus(ReloadStatus status)
 {
 	reloadStatus = status;
+}
+
+void Gun::SetSound(SoundGo* shootSound, SoundGo* shootFailSound, SoundGo* reloadSound)
+{
+	this->shootSound = shootSound;
+	this->shootFailSound = shootFailSound;
+	this->reloadSound = reloadSound;
+}
+
+void Gun::UpgradeFire()
+{
+	fireRate = std::max(fireRate - 0.02f, 0.05f);
+}
+
+void Gun::UpgradeClip()
+{
+	maxMagazine += 10;
+	reloadRate = std::max(reloadRate - 0.2f, 0.f);
 }

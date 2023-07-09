@@ -6,8 +6,8 @@ class SoundGo : public GameObject
 {
 public:
 	sf::Sound sound;
-
-	SoundGo(const std::string n = "");
+	std::string soundBufferId;
+	SoundGo(const std::string id = "", const std::string n = "");
 	virtual ~SoundGo() override;
 
 	virtual void Init()override;
@@ -16,6 +16,7 @@ public:
 	virtual void Update(float dt)override;
 	virtual void Draw(sf::RenderWindow& window)override;
 
+	virtual void Play();
 
 };
 

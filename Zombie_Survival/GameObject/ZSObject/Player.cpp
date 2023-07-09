@@ -177,6 +177,14 @@ void Player::SetReloadStatus(ReloadStatus status)
 	gunArray[currentGunIndex]->SetReloadStatus(status);
 }
 
+void Player::SetGunSound(SoundGo* shootSound, SoundGo* shootFailSound, SoundGo* reloadSound)
+{
+	for (int i = 0; i < gunArray[0]->TotalTypes; i++)
+	{
+		gunArray[i]->SetSound(shootSound, shootFailSound, reloadSound);
+	}
+}
+
 void Player::OnHitted(int damdge)
 {
 	hitedSound->sound.play();
@@ -208,4 +216,19 @@ void Player::OnDie()
 void Player::ItemHealEat(int hp) 
 {
 	this->hp = std::min(this->hp+hp, maxHp);
+}
+
+void Player::GunUp(int upCase)
+{
+	switch (upCase)
+	{
+	case 1:
+		gunArray[0]->UpgradeFire();
+		gunArray[1]->UpgradeFire();
+		break;
+	case 2:
+		gunArray[0]->UpgradeClip();
+		gunArray[1]->UpgradeClip();
+		break;
+	}
 }

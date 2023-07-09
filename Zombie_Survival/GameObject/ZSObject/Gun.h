@@ -3,6 +3,7 @@
 #include "ObjectPool.h"
 
 class Bullet;
+class SoundGo;
 
 enum class ReloadStatus
 {
@@ -19,8 +20,9 @@ public:
 		NONE = -1,
 		PISTOL,
 		RIFLE,
+		GUNTYPES
 	};
-	static constexpr int TotalTypes = 2;
+	static constexpr int TotalTypes = (int)Types::GUNTYPES;
 
 	static const int ammoStats[TotalTypes];
 	static const int magazineStats[TotalTypes];
@@ -33,10 +35,13 @@ protected:
 	ObjectPool<Bullet> poolBullets;
 
 	int maxAmmo = 0;
-	
-
 	int maxMagazine = 0;
 	int magazine = 0;
+
+	SoundGo* shootSound;
+	SoundGo* shootFailSound;
+	SoundGo* reloadSound;
+	
 	
 	ReloadStatus reloadStatus = ReloadStatus::NONE;
 	float reloadRate = 0.f;
@@ -59,7 +64,10 @@ public:
 
 	void SetType(Gun::Types type);
 	void SetReloadStatus(ReloadStatus status);
+	void SetSound(SoundGo* shootSound, SoundGo* shootFailSound, SoundGo* reloadSound);
 
+	void UpgradeFire();
+	void UpgradeClip();
 	void Shoot(const sf::Vector2f& position, const sf::Vector2f& look, float dt);
 	void Reload();
 };
