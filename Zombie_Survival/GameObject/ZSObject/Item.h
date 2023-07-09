@@ -19,7 +19,7 @@ private:
 	float luck = 0.0;
 	bool isSpawn = false;
 	float timer = 0.f;
-	float maxTime = 30.f;
+	float maxTime = 15.f;
 
 	Player* player = nullptr;
 	SoundGo* eatSound = nullptr;

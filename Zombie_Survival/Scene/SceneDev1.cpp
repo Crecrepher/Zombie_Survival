@@ -174,8 +174,10 @@ void SceneDev1::Enter()
 	findSound->sound.setLoop(true);
 
 	itemAmmo->SetType(Item::Types::Ammo);
+	itemAmmo->sortOrder = -2;
 	itemHealth->SetType(Item::Types::Hp);
-	
+	itemAmmo->sortOrder = -1;
+
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetOrigin(Origins::ML);
 	hp->rectangle.setFillColor(sf::Color::Red);
@@ -268,39 +270,18 @@ void SceneDev1::Update(float dt)
 	{
 		if (wave > 1 && pause)
 		{
-			Shop();
-			if (padeIn < 254)
-			{
-				padeIn += dt * 100;
-				SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
-				findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
-				TextGo* findTGo = (TextGo*)FindGo("Shop");
-				findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
-			}
+			Shop(dt);
 		}
 		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Enter)&& wave < 1)
 		{
-			pause = false;
-			TextGo* findTGo = (TextGo*)FindGo("Score");
-			findTGo->text.setPosition(20.f, 20.f);
-			findTGo->text.setString("SCORE:0");
-			findTGo->text.setCharacterSize(60);
-			SoundGo* findSound = (SoundGo*)FindGo("Bgm");
-			findSound->sound.play();
+			StartGame();
 		}
 		return;
 	}
 	else if (wave > 1 && !pause && padeIn > 0)
 	{
-		padeIn -= dt * 300;
-		SoundGo* findSound = (SoundGo*)FindGo("Bgm");
-		findSound->sound.setVolume(100);
-		SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
-		findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
-		TextGo* findTGo = (TextGo*)FindGo("Shop");
-		findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
+		ShopOff(dt);
 	}
-
 
 	Scene::Update(dt);
 
@@ -310,35 +291,11 @@ void SceneDev1::Update(float dt)
 		return;
 	}
 	
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
-	{
-		SpawnZombies(10+wave * 5, player->GetPosition(), 1000.f);
-		wave++;
-	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
-	{
-		ClearObjectPool(zombiePool);
-	}
+	TestCode();
 
 	if (zombiePool.GetUseList().size() == 0)
 	{
-		SpawnZombies(10+wave*5, player->GetPosition(), 1000.f);
-		wave++;
-		TextGo* findTGo = (TextGo*)FindGo("WaveNZombies");
-		std::stringstream ss; 
-		ss << "WAVE:" << wave << "\t" << "ZOMBIES:" << zombiePool.GetUseList().size();
-		findTGo->text.setString(ss.str());
-		SoundGo* findSound = (SoundGo*)FindGo("ShopIn");
-		findSound->sound.play();
-		findSound = (SoundGo*)FindGo("Bgm");
-		if (wave > 1)
-		{
-			findSound->sound.setVolume(20);
-		}
-		if (wave>1)
-		{
-			pause = true;
-		}
+		WaveEnd();
 	}
 
 	RectGo* hp = (RectGo*)FindGo("Hp");
@@ -470,11 +427,11 @@ void SceneDev1::OnDieZombie(Zombie* zombie)
 	ss << "WAVE:" << wave << "\t" << "ZOMBIES:" << zombiePool.GetUseList().size()-1;
 	findTGo->text.setString(ss.str());
 
-	if (!IsItemSpawn())
+	if (!itemAmmo->GetSpawn())
 	{
 		itemAmmo->TryMake(zombie->GetPosition());
 	}
-	if (!IsItemSpawn())
+	if (!itemHealth->GetSpawn())
 	{
 		itemHealth->TryMake(zombie->GetPosition());
 	}
@@ -492,7 +449,18 @@ const std::list<Zombie*>* SceneDev1::GetZombieList() const
 	return &zombiePool.GetUseList();
 }
 
-void SceneDev1::Shop()
+void SceneDev1::StartGame()
+{
+	pause = false;
+	TextGo* findTGo = (TextGo*)FindGo("Score");
+	findTGo->text.setPosition(20.f, 20.f);
+	findTGo->text.setString("SCORE:0");
+	findTGo->text.setCharacterSize(60);
+	SoundGo* findSound = (SoundGo*)FindGo("Bgm");
+	findSound->sound.play();
+}
+
+void SceneDev1::Shop(float dt)
 {
 	SoundGo* findSound = (SoundGo*)FindGo("PowerUp");
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
@@ -531,7 +499,58 @@ void SceneDev1::Shop()
 		findSound->sound.play();
 		pause = false;
 	}
+	if (padeIn < 254)
+	{
+		padeIn += dt * 100;
+		SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
+		findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
+		TextGo* findTGo = (TextGo*)FindGo("Shop");
+		findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
+	}
 }
+
+void SceneDev1::TestCode()
+{
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
+	{
+		SpawnZombies(10 + wave * 5, player->GetPosition(), 1000.f);
+		wave++;
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
+	{
+		ClearObjectPool(zombiePool);
+	}
+}
+
+void SceneDev1::WaveEnd()
+{
+	SpawnZombies(10 + wave * 5, player->GetPosition(), 1000.f);
+	wave++;
+	TextGo* findTGo = (TextGo*)FindGo("WaveNZombies");
+	std::stringstream ss;
+	ss << "WAVE:" << wave << "\t" << "ZOMBIES:" << zombiePool.GetUseList().size();
+	findTGo->text.setString(ss.str());
+	SoundGo* findSound = (SoundGo*)FindGo("ShopIn");
+	findSound->sound.play();
+	findSound = (SoundGo*)FindGo("Bgm");
+	if (wave > 1)
+	{
+		findSound->sound.setVolume(20);
+		pause = true;
+	}
+}
+
+void SceneDev1::ShopOff(float dt)
+{
+	padeIn -= dt * 300;
+	SoundGo* findSound = (SoundGo*)FindGo("Bgm");
+	findSound->sound.setVolume(100);
+	SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");
+	findSGo->sprite.setColor(sf::Color(255, 255, 255, padeIn));
+	TextGo* findTGo = (TextGo*)FindGo("Shop");
+	findTGo->text.setFillColor(sf::Color(255, 255, 255, padeIn));
+}
+
 
 void SceneDev1::AmmoUiUpdate()
 {
@@ -539,9 +558,4 @@ void SceneDev1::AmmoUiUpdate()
 	std::stringstream ss;
 	ss << player->GetAmmo();
 	findTGo->text.setString(ss.str());
-}
-
-inline bool SceneDev1::IsItemSpawn() 
-{
-	return itemAmmo->GetSpawn() || itemHealth->GetSpawn();
 }
