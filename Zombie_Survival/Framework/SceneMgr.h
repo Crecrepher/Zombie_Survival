@@ -17,7 +17,7 @@ protected:
 	SceneId currentSceneId = SceneId::None;
 	Scene* currentScene = nullptr;
 
-	SceneId startSceneId = SceneId::Dev1;
+	SceneId startSceneId = SceneId::Title;
 
 	float timer = 0.f;
 	bool timeFlip = false;
