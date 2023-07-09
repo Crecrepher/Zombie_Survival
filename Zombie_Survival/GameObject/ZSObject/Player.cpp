@@ -6,9 +6,10 @@
 #include "SceneDev1.h"
 #include "Zombie.h"
 #include "Gun.h"
+#include "SoundGo.h"
 
 #include <math.h>
-Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(300.f)
+Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(100.f)
 {
 }
 
@@ -38,9 +39,10 @@ void Player::Init()
 void Player::Reset()
 {
 	SpriteGo::Reset();
-
+	maxHp = 100;
 	hp = maxHp;
 	isAlive = true;
+	speed = 100.f;
 
 	for (auto gun : gunArray)
 	{
@@ -137,19 +139,15 @@ void Player::SetWallBounds(const sf::FloatRect& bounds)
 	wallBoundsRB = { wallBounds.left + wallBounds.width,wallBounds.top + wallBounds.height };
 }
 
-void Player::Ouch(float dt)
-{
-	if (invincibility <=0)
-	{
-		hp -= 5;
-		invincibility = 25;
-		sprite.setColor(sf::Color::Color(205, 12, 34));
-	}
-}
-
 int Player::GetHp()
 {
 	return hp;
+}
+
+
+int Player::GetHpBarLength()
+{
+	return hp * 100/maxHp;
 }
 
 std::stringstream Player::GetAmmoInfo()
@@ -181,6 +179,7 @@ void Player::SetReloadStatus(ReloadStatus status)
 
 void Player::OnHitted(int damdge)
 {
+	hitedSound->sound.play();
 	if (!isAlive)
 	{
 		return;
@@ -204,4 +203,9 @@ void Player::OnDie()
 	{
 		sceneDev1->OnDiePlayer();
 	}
+}
+
+void Player::ItemHealEat(int hp) 
+{
+	this->hp = std::min(this->hp+hp, maxHp);
 }

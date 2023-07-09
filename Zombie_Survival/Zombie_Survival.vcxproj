@@ -161,6 +161,7 @@
     <ClCompile Include="GameObject\RectGo.cpp" />
     <ClCompile Include="GameObject\SoundGo.cpp" />
     <ClCompile Include="GameObject\TextGo.cpp" />
+    <ClCompile Include="GameObject\ZSObject\Item.cpp" />
     <ClCompile Include="GameObject\ZSObject\Player.cpp" />
     <ClCompile Include="GameObject\ZSObject\Gun.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -206,6 +207,7 @@
     <ClInclude Include="GameObject\ZSObject\Blood.h" />
     <ClInclude Include="GameObject\SpriteEffect.h" />
     <ClInclude Include="GameObject\ZSObject\Gun.h" />
+    <ClInclude Include="GameObject\ZSObject\Item.h" />
     <ClInclude Include="Universial\ObjectPool.h" />
     <ClInclude Include="GameObject\ZSObject\Bullet.h" />
     <ClInclude Include="GameObject\CirGo.h" />

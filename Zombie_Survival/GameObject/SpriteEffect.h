@@ -14,7 +14,7 @@ public:
 	virtual ~SpriteEffect() override {};
 
 	void SetDuration(float duration) { this->duration = duration; }
-	void SetPool(ObjectPool<SpriteEffect>* pool) { this->pool = pool; }
+	virtual void SetPool(ObjectPool<SpriteEffect>* pool) { this->pool = pool; }
 	virtual void Init()override;
 	virtual void Reset()override;
 	virtual void Release() override;

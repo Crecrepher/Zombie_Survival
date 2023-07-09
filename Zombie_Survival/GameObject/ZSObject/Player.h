@@ -2,15 +2,15 @@
 #include "SpriteGo.h"
 #include "Gun.h"
 
+class SoundGo;
+
 class Player :public SpriteGo
 {
 protected:
 	sf::Vector2f direction;
 	sf::Vector2f look;
-	float speed;
+	
 	float invincibility = 0;
-	sf::Vector2f mapTop;//
-	sf::Vector2f mapBot;//
 
 	sf::FloatRect wallBounds;
 	sf::Vector2f wallBoundsLT;
@@ -21,8 +21,10 @@ protected:
 
 	std::vector<Gun*> gunArray;
 	int currentGunIndex = 0;
-public:
+	SoundGo* hitedSound = nullptr;
 
+public:
+	float speed;
 	Player(const std::string id = "",const std::string n = "");
 
 	virtual void SetPosition(float x, float y)override;
@@ -36,19 +38,27 @@ public:
 	virtual void Draw(sf::RenderWindow& window)override;
 	
 	void SetWallBounds(const sf::FloatRect& bounds);
+	void SetSound(SoundGo* hitSound) { hitedSound = hitSound; }
 
-	void Ouch(float dt);
 	int GetHp();
-	
+	int GetHpBarLength();
+	const int GetAmmo() const;
 	bool isAlive = false;
 
 	void OnHitted(int damdge);
 	void OnDie();
+
 
 	void AddGun(Gun::Types type);
 	const float GetReloadTimer() const;
 	const ReloadStatus GetReloadStatus() const;
 	void SetReloadStatus(ReloadStatus status);
 	std::stringstream GetAmmoInfo();
+
+	void ItemHealEat(int hp);
+	void ItemAmmoEat(int ammo) { gunArray[0]->ammo += ammo; }
+	void HealthUp() { maxHp += 20; ItemHealEat(20);}
+	void SpeedUp() { speed += 30; }
+
 };
 

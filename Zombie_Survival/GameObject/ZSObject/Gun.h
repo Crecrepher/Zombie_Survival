@@ -27,12 +27,13 @@ public:
 	static const float reloadRateStats[TotalTypes];
 	static const float fireRateStats[TotalTypes];
 
+	int ammo = 0;
 protected:
 	Types gunType = Types::NONE;
 	ObjectPool<Bullet> poolBullets;
 
 	int maxAmmo = 0;
-	int ammo = 0;
+	
 
 	int maxMagazine = 0;
 	int magazine = 0;
