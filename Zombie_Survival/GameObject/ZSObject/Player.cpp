@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "SceneDev1.h"
 #include "Zombie.h"
+#include "Gun.h"
 
 #include <math.h>
 Player::Player(const std::string id,const std::string n) :SpriteGo(id,n), speed(300.f)
@@ -25,13 +26,13 @@ void Player::Init()
 {
 	SpriteGo::Init();
 	SetOrigin(Origins::MC);
-
-	ObjectPool<Bullet>* ptr = &poolBullets;
-	poolBullets.OnCreate = [ptr](Bullet* bullet) {
-		bullet->textureId = "graphics/bullet.png";
-		bullet->pool = ptr;
-	};
-	poolBullets.Init();
+	
+	AddGun(Gun::Types::PISTOL);
+	AddGun(Gun::Types::RIFLE);
+	for (auto gun : gunArray)
+	{
+		gun->Init();
+	}
 }
 
 void Player::Reset()
@@ -41,19 +42,20 @@ void Player::Reset()
 	hp = maxHp;
 	isAlive = true;
 
-	for (auto bullet : poolBullets.GetUseList())
+	for (auto gun : gunArray)
 	{
-		SCENE_MGR.GetCurrScene()->RemoveGo(bullet);
+		gun->Reset();
 	}
-	poolBullets.Clear();
-	ammo = maxAmmo;
 }
 
 void Player::Release()
 {
 	SpriteGo::Release();
 
-	poolBullets.Release();
+	for (auto gun : gunArray)
+	{
+		gun->Release();
+	}
 }
 
 void Player::Update(float dt)
@@ -88,19 +90,12 @@ void Player::Update(float dt)
 
 
 	//발사
-	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left)&&ammo>0)
+	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left) || INPUT_MGR.GetMouseButton(sf::Mouse::Button::Left))
 	{
-		Bullet* bullet = poolBullets.Get();
-		bullet->Fire(GetPosition(), look, 1000.f);
-		ammo--;
-		Scene* scene = SCENE_MGR.GetCurrScene();
-		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
-		if (sceneDev1 != nullptr)
-		{
-			bullet->SetZombieList(sceneDev1->GetZombieList());
-			sceneDev1->AddGo(bullet);
-		}
+		gunArray[currentGunIndex]->Shoot(GetPosition(), look, dt);
 	}
+	
+	//피격 무적시간
 	if (invincibility > 0)
 	{
 		invincibility -= (dt * 100);
@@ -109,6 +104,24 @@ void Player::Update(float dt)
 	{
 		sprite.setColor(sf::Color::White);
 	}
+
+	//재장전
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::R))
+	{
+		gunArray[currentGunIndex]->Reload();
+	}
+
+	//무기 변경
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Q))
+	{
+		currentGunIndex = 0;
+	}
+	else if (INPUT_MGR.GetKeyDown(sf::Keyboard::E))
+	{
+		currentGunIndex = 1;
+	}
+
+	gunArray[currentGunIndex]->Update(dt);
 }
 
 void Player::Draw(sf::RenderWindow& window)
@@ -139,9 +152,31 @@ int Player::GetHp()
 	return hp;
 }
 
-const int Player::GetAmmo() const
+std::stringstream Player::GetAmmoInfo()
 {
-	return ammo;
+	return std::stringstream() << gunArray[currentGunIndex]->GetMagazine() << " / " << gunArray[currentGunIndex]->GetAmmo();
+}
+
+void Player::AddGun(Gun::Types type)
+{
+	Gun* gun = new Gun;
+	gun->SetType(type);
+	gunArray.push_back(gun);
+}
+
+const float Player::GetReloadTimer() const
+{
+	return gunArray[currentGunIndex]->GetReloadTimer();
+}
+
+const ReloadStatus Player::GetReloadStatus() const
+{
+	return gunArray[currentGunIndex]->GetReloadStatus();
+}
+
+void Player::SetReloadStatus(ReloadStatus status)
+{
+	gunArray[currentGunIndex]->SetReloadStatus(status);
 }
 
 void Player::OnHitted(int damdge)

@@ -1,9 +1,6 @@
 #pragma once
 #include "SpriteGo.h"
-#include "ObjectPool.h"
-#include "Bullet.h"
-
-class Bullet;
+#include "Gun.h"
 
 class Player :public SpriteGo
 {
@@ -22,9 +19,8 @@ protected:
 	int maxHp = 100;
 	int hp = 0;
 
-	ObjectPool<Bullet> poolBullets;
-	int maxAmmo = 900;
-	int ammo = 0;
+	std::vector<Gun*> gunArray;
+	int currentGunIndex = 0;
 public:
 
 	Player(const std::string id = "",const std::string n = "");
@@ -43,11 +39,16 @@ public:
 
 	void Ouch(float dt);
 	int GetHp();
-	const int GetAmmo() const;
-
+	
 	bool isAlive = false;
 
 	void OnHitted(int damdge);
 	void OnDie();
+
+	void AddGun(Gun::Types type);
+	const float GetReloadTimer() const;
+	const ReloadStatus GetReloadStatus() const;
+	void SetReloadStatus(ReloadStatus status);
+	std::stringstream GetAmmoInfo();
 };
 

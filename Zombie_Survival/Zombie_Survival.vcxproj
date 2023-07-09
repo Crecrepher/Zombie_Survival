@@ -120,7 +120,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./SFML-2.5.1/include;./;./Framework;./Scene;./Universial;./GameObject;./GameObject/ZSObject;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./SFML-2.5.1/include;./GameObject/ZSObject;./GameObject;./Universial;./Framework;./Scene;./;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
@@ -140,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./SFML-2.5.1/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./SFML-2.5.1/include;./GameObject/ZSObject;./GameObject;./Universial;./Framework;./Scene;./;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,6 +162,10 @@
     <ClCompile Include="GameObject\SoundGo.cpp" />
     <ClCompile Include="GameObject\TextGo.cpp" />
     <ClCompile Include="GameObject\ZSObject\Player.cpp" />
+    <ClCompile Include="GameObject\ZSObject\Gun.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Scene\SceneDev1.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -201,6 +205,7 @@
   <ItemGroup>
     <ClInclude Include="GameObject\ZSObject\Blood.h" />
     <ClInclude Include="GameObject\SpriteEffect.h" />
+    <ClInclude Include="GameObject\ZSObject\Gun.h" />
     <ClInclude Include="Universial\ObjectPool.h" />
     <ClInclude Include="GameObject\ZSObject\Bullet.h" />
     <ClInclude Include="GameObject\CirGo.h" />

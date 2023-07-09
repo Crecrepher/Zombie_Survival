@@ -53,6 +53,7 @@ void SceneDev1::Init()
 	VertexArrayGo* background = CreateBackground({ 30, 30 }, tileWorldSize, tileTexSize, "graphics/background_sheet.png");
 	AddGo(background);
 	AddGo(new RectGo("Hp"));
+	AddGo(new RectGo("Reload"));
 	AddGo(new TextGo("Score"));
 	AddGo(new TextGo("HiScore"));
 	AddGo(new TextGo("RemainAmmo"));
@@ -60,6 +61,7 @@ void SceneDev1::Init()
 	AddGo(new TextGo("Shop"));
 	AddGo(new SpriteGo("graphics/ammo_icon.png","AmmoIcon"));
 	AddGo(new SpriteGo("graphics/background.png", "ShopBack"));
+	
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -127,6 +129,12 @@ void SceneDev1::Enter()
 	hp->SetPosition(FRAMEWORK.GetWindowSize().x * 0.25f, FRAMEWORK.GetWindowSize().y -60.f);
 	hp->sortLayer = 100;
 
+	RectGo* reload = (RectGo*)FindGo("Reload");
+	reload->SetOrigin(Origins::MC);
+	reload->rectangle.setFillColor(sf::Color::Blue);
+	reload->sortLayer = 100;
+	reload->SetActive(false);
+
 	TextGo* findTGo = (TextGo*)FindGo("Score");
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
 	findTGo->text.setString("\nPRESS ENTER\nTO CONTINUE");
@@ -151,7 +159,7 @@ void SceneDev1::Enter()
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
 	ss.str("");
 	ss.clear();
-	ss << player->GetAmmo();
+	ss = player->GetAmmoInfo();
 	findTGo->text.setString(ss.str());
 	findTGo->text.setCharacterSize(60);
 	findTGo->text.setFillColor(sf::Color::White);
@@ -273,15 +281,26 @@ void SceneDev1::Update(float dt)
 	RectGo* hp = (RectGo*)FindGo("Hp");
 	hp->SetSize({ player->GetHp() * 3.f, 30.f });
 
-	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Button::Left))
+	bool ammoUiUpdateCheck = INPUT_MGR.GetMouseButtonDown(sf::Mouse::Button::Left) ||
+		INPUT_MGR.GetMouseButton(sf::Mouse::Button::Left) ||
+		INPUT_MGR.GetKeyDown(sf::Keyboard::Q) ||
+		INPUT_MGR.GetKeyDown(sf::Keyboard::E);
+	if (ammoUiUpdateCheck || player->GetReloadStatus() != ReloadStatus::NONE)
 	{
-		TextGo* findTGo = (TextGo*)FindGo("RemainAmmo");
-		std::stringstream ss;
-		ss << player->GetAmmo();
-		findTGo->text.setString(ss.str());
-	}
+		RectGo* reload = (RectGo*)FindGo("Reload");
+		reload->SetActive(true);
+		reload->SetSize({ player->GetReloadTimer() * 30.f, 5.f});
+		reload->SetPosition(player->GetPosition().x, player->GetPosition().y + 10.f);
 
-	
+		TextGo* findTGo = (TextGo*)FindGo("RemainAmmo");
+		std::stringstream ss = player->GetAmmoInfo();
+		findTGo->text.setString(ss.str());
+		if (player->GetReloadStatus() == ReloadStatus::END)
+		{
+			reload->SetActive(false);
+			player->SetReloadStatus(ReloadStatus::NONE);
+		}
+	}
 }
 
 void SceneDev1::Draw(sf::RenderWindow& window)
