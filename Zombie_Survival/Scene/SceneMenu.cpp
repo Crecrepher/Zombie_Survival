@@ -55,10 +55,8 @@ void SceneMenu::Release()
 {
 	for (auto go : gameObjects)
 	{
-		//go->Release();
 		delete go;
 	}
-	//RESOURCE_MGR.GetSoundBuffer
 }
 
 void SceneMenu::Enter()
@@ -66,7 +64,6 @@ void SceneMenu::Enter()
 	Scene::Enter();
 	loading = false;
 	menuIndex = 0;
-	Scene::Enter();
 	EffectGo* findEGo = (EffectGo*)FindGo("Icon");
 	findEGo->SetOrigin(Origins::MC);
 	findEGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2.f, FRAMEWORK.GetWindowSize().y / 2.5f);
@@ -131,44 +128,75 @@ void SceneMenu::Exit()
 void SceneMenu::Update(float dt)
 {
 	Scene::Update(dt);
+
+	//로딩화면
 	if (loading)
 	{
 		SCENE_MGR.ChangeScene(SceneId::Game);
 	}
+
 	//아이콘 애니메이션
 	EffectGo* findGo = (EffectGo*)FindGo("Icon");
 	findGo->SetSize(1.3f + (SCENE_MGR.TimerTime() / 10),
 		1.3f + (SCENE_MGR.TimerTime() / 10));
 
 	//메뉴선택
+	MenuMove();
+
+	//메뉴 선택
+	MenuSelect();
+	
+	if (isClose)
+	{
+		closeTimer += dt;
+	}
+
+	//타이틀로 돌아가기
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Escape))
+	{
+		SCENE_MGR.ChangeScene(SceneId::Title);
+	}
+}
+
+void SceneMenu::Draw(sf::RenderWindow& window)
+{
+	Scene::Draw(window);
+	if (closeTimer >= 2.f)
+	{
+		window.close();
+	}
+	window.setMouseCursorVisible(true);
+}
+
+void SceneMenu::MenuMove()
+{
 	RectGo* findRGo = (RectGo*)FindGo("MenuSelector");
 	SoundGo* sound = (SoundGo*)FindGo("MoveSound");
 	if (menuIndex > 0 && INPUT_MGR.GetKeyDown(sf::Keyboard::Left)) //왼쪽 방향키
 	{
 		menuIndex--;
-		menuIndex--;
 		findRGo->SetPosition
-		(findRGo->GetPosition().x 
+		(findRGo->GetPosition().x
 			- (FRAMEWORK.GetWindowSize().x * 0.5f),
 			findRGo->GetPosition().y);
 		sound->sound.play();
 	}
-	else if (menuIndex < 2 && INPUT_MGR.GetKeyDown(sf::Keyboard::Right)) //오른쪽 방향키
+	else if (menuIndex < 1 && INPUT_MGR.GetKeyDown(sf::Keyboard::Right)) //오른쪽 방향키
 	{
 		menuIndex++;
-		menuIndex++;
 		findRGo->SetPosition
-		(findRGo->GetPosition().x 
+		(findRGo->GetPosition().x
 			+ (FRAMEWORK.GetWindowSize().x * 0.5f),
 			findRGo->GetPosition().y);
 		sound->sound.play();
 	}
+}
 
-	//메뉴 선택
-	EffectGo* icon = (EffectGo*)FindGo("Icon");
+void SceneMenu::MenuSelect()
+{
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Return))
 	{
-		sound = (SoundGo*)FindGo("SelectSound");
+		SoundGo* sound = (SoundGo*)FindGo("SelectSound");
 		sound->sound.play();
 		switch (menuIndex)
 		{
@@ -182,31 +210,12 @@ void SceneMenu::Update(float dt)
 			break;
 		}
 		case 2: //게임 종료
-			sound = (SoundGo*)FindGo("ExitSound");
+			EffectGo * icon = (EffectGo*)FindGo("Icon");
 			icon->Fire(sf::Vector2f(0.f, -1000.f));
+			sound = (SoundGo*)FindGo("ExitSound");
 			sound->sound.play();
 			isClose = true;
 			break;
 		}
 	}
-	if (isClose)
-	{
-		closeTimer += dt;
-	}
-
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Escape))
-	{
-		SCENE_MGR.ChangeScene(SceneId::Title);
-		sound->sound.play();
-	}
-}
-
-void SceneMenu::Draw(sf::RenderWindow& window)
-{
-	Scene::Draw(window);
-	if (closeTimer >= 2.f)
-	{
-		window.close();
-	}
-	window.setMouseCursorVisible(true);
 }

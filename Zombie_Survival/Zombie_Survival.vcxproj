@@ -152,7 +152,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameObject\ZSObject\Blood.cpp" />
     <ClCompile Include="GameObject\ZSObject\Bullet.cpp" />
     <ClCompile Include="GameObject\EffectGo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -197,7 +196,6 @@
     <ClCompile Include="GameObject\ZSObject\Zombie.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameObject\ZSObject\Blood.h" />
     <ClInclude Include="GameObject\SpriteEffect.h" />
     <ClInclude Include="GameObject\ZSObject\Gun.h" />
     <ClInclude Include="GameObject\ZSObject\Item.h" />

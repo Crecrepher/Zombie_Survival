@@ -59,6 +59,7 @@ void SceneTitile::Enter()
 	SpriteGo* findSGo = (SpriteGo*)FindGo("Icon");
 	findSGo->SetOrigin(Origins::MC);
 	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2.f, FRAMEWORK.GetWindowSize().y / 2.5f);
+	findSGo->SetSize(1.5f, 1.5f);
 	findSGo->sortLayer = 1;
 
 	findSGo = (SpriteGo*)FindGo("Back");
@@ -86,17 +87,14 @@ void SceneTitile::Exit()
 
 void SceneTitile::Update(float dt)
 {
-	Scene::Update(dt);
-
-	SpriteGo* findGo = (SpriteGo*)FindGo("Icon");
-	findGo->SetSize(1.5f, 1.5f);
+	Scene::Update(dt);	
 
 	TextGo* findTGo = (TextGo*)FindGo("Text");
 	findTGo->SetActive(SCENE_MGR.TimeBaseFliper());
-
-	SoundGo* sound = (SoundGo*)FindGo("MoveSound");
+	
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Enter))
 	{
+		SoundGo* sound = (SoundGo*)FindGo("MoveSound");
 		sound->sound.play();
 		SCENE_MGR.ChangeScene(SceneId::Menu);
 	}

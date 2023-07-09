@@ -10,7 +10,6 @@
 #include "Zombie.h"
 #include "VertexArrayGo.h"
 #include "RectGo.h"
-#include "Blood.h"
 #include "TextGo.h"
 #include "SpriteEffect.h"
 #include "Item.h"
@@ -273,6 +272,7 @@ void SceneGame::Exit()
 
 void SceneGame::Update(float dt)
 {
+	//메뉴로 돌아가기
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Escape))
 	{
 		SCENE_MGR.ChangeScene(SceneId::Title);
@@ -280,6 +280,7 @@ void SceneGame::Update(float dt)
 	}
 	worldView.setCenter(player->GetPosition());
 
+	//게임오버로 중단 및 메뉴복귀
 	if (isGameOver)
 	{
 		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Enter))
@@ -290,6 +291,7 @@ void SceneGame::Update(float dt)
 		return;
 	}
 
+	//일시정지(시작 및 업그레이드)
 	if (pause)
 	{
 		if (wave > 1 && pause)
@@ -309,45 +311,17 @@ void SceneGame::Update(float dt)
 
 	Scene::Update(dt);
 	
-	FrameOut(dt);
-	TestCode();
-
+	//좀비 전부 처치시
 	if (zombiePool.GetUseList().size() == 0)
 	{
 		WaveEnd();
 	}
 
-	RectGo* hp = (RectGo*)FindGo("Hp");
-	hp->SetSize({ player->GetHpBarLength() * 3.f, 30.f });
-
-	bool ammoUiUpdateCheck = INPUT_MGR.GetMouseButtonDown(sf::Mouse::Button::Left) ||
-		INPUT_MGR.GetMouseButton(sf::Mouse::Button::Left) ||
-		INPUT_MGR.GetKeyDown(sf::Keyboard::Tab);
-	if (ammoUiUpdateCheck || player->GetReloadStatus() != ReloadStatus::NONE)
-	{
-		if (player->GetReloadStatus() == ReloadStatus::START)
-		{
-			RectGo* reload = (RectGo*)FindGo("Reload");
-			reload->SetActive(true);
-			reload->SetSize({ player->GetReloadTimer() * 30.f, 5.f });
-			reload->SetOrigin(Origins::MC);
-			reload->SetPosition(player->GetPosition().x, player->GetPosition().y + 15.f);
-		}
-		AmmoUiUpdate();
-
-		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Tab))
-		{
-			RectGo* reload = (RectGo*)FindGo("Reload");
-			reload->SetActive(false);
-		}
-		if (player->GetReloadStatus() == ReloadStatus::END)
-		{
-			RectGo* reload = (RectGo*)FindGo("Reload");
-			reload->SetActive(false);
-			player->SetReloadStatus(ReloadStatus::NONE);
-		}
-		
-	}
+	//UI 업데이트 관련
+	FrameOut(dt);
+	UiUpdate();
+	//TestCode();
+	//1 for spawn, 2 for next wave
 }
 
 void SceneGame::Draw(sf::RenderWindow& window)
@@ -589,6 +563,42 @@ void SceneGame::FrameOut(float dt)
 		TextGo* findTGo = (TextGo*)FindGo("Frame");
 		findTGo->text.setString(str);
 		frame = 0.f;
+	}
+}
+
+void SceneGame::UiUpdate()
+{
+
+	RectGo* hp = (RectGo*)FindGo("Hp");
+	hp->SetSize({ player->GetHpBarLength() * 3.f, 30.f });
+
+	bool ammoUiUpdateCheck = INPUT_MGR.GetMouseButtonDown(sf::Mouse::Button::Left) ||
+		INPUT_MGR.GetMouseButton(sf::Mouse::Button::Left) ||
+		INPUT_MGR.GetKeyDown(sf::Keyboard::Tab);
+	if (ammoUiUpdateCheck || player->GetReloadStatus() != ReloadStatus::NONE)
+	{
+		if (player->GetReloadStatus() == ReloadStatus::START)
+		{
+			RectGo* reload = (RectGo*)FindGo("Reload");
+			reload->SetActive(true);
+			reload->SetSize({ player->GetReloadTimer() * 30.f, 5.f });
+			reload->SetOrigin(Origins::MC);
+			reload->SetPosition(player->GetPosition().x, player->GetPosition().y + 15.f);
+		}
+		AmmoUiUpdate();
+
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Tab))
+		{
+			RectGo* reload = (RectGo*)FindGo("Reload");
+			reload->SetActive(false);
+		}
+		if (player->GetReloadStatus() == ReloadStatus::END)
+		{
+			RectGo* reload = (RectGo*)FindGo("Reload");
+			reload->SetActive(false);
+			player->SetReloadStatus(ReloadStatus::NONE);
+		}
+
 	}
 }
 

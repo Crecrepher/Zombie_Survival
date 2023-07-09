@@ -68,6 +68,7 @@ public:
 	void WaveEnd();
 	void TestCode();
 	void FrameOut(float dt);
+	void UiUpdate();
 };
 
 template<typename T>
