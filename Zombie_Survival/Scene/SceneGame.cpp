@@ -290,6 +290,10 @@ void SceneGame::Enter()
 
 void SceneGame::Exit()
 {
+	if (SCENE_MGR.hiScore < hiScore)
+	{
+		SaveBestSco();
+	}
 	ClearObjectPool(bloodEffectPool);
 	ClearObjectPool(zombiePool);
 	player->Reset();
@@ -495,7 +499,6 @@ void SceneGame::OnDiePlayer()
 	{
 		SaveBestSco();
 	}
-	
 }
 
 const std::list<Zombie*>* SceneGame::GetZombieList() const

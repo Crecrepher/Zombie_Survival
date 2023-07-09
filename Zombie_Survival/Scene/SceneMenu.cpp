@@ -210,7 +210,7 @@ void SceneMenu::MenuSelect()
 			loading = true;
 			break;
 		}
-		case 2: //게임 종료
+		case 1: //게임 종료
 			EffectGo * icon = (EffectGo*)FindGo("Icon");
 			icon->Fire(sf::Vector2f(0.f, -1000.f));
 			sound = (SoundGo*)FindGo("ExitSound");
