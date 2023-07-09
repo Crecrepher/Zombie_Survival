@@ -82,12 +82,21 @@ void Player::Update(float dt)
 		direction /= magnitude;
 	}
 
-	position += direction * speed * dt;
+	if (bloaterBonk)
+	{
+		position += bonkDir * invincibility *5000.f * dt;
+	}
+	else
+	{
+		position += direction * speed * dt;
+	}
+	
 
 	if (!wallBounds.contains(position))
 	{
 		position = Utils::Clamp(position,wallBoundsLT,wallBoundsRB);
 	}
+
 	SetPosition(position);
 
 
@@ -100,11 +109,12 @@ void Player::Update(float dt)
 	//피격 무적시간
 	if (invincibility > 0)
 	{
-		invincibility -= (dt * 100);
+		invincibility -= dt;
 	}
 	else
 	{
 		sprite.setColor(sf::Color::White);
+		bloaterBonk = false;
 	}
 
 	//재장전
@@ -191,11 +201,17 @@ void Player::OnHitted(int damdge)
 
 	hp = std::max(hp - damdge,0);
 	sprite.setColor(sf::Color::Color(205, 12, 34,200));
-	invincibility = 25;
+	invincibility = 0.25;
 	if (hp == 0)
 	{
 		OnDie();
 	}
+}
+
+void Player::OnHittedByBloat(sf::Vector2f bonkDir) 
+{
+	this->bonkDir = bonkDir; 
+	bloaterBonk = true;
 }
 
 void Player::OnDie()

@@ -62,6 +62,7 @@ void SceneMenu::Release()
 void SceneMenu::Enter()
 {
 	Scene::Enter();
+	hiScore = SCENE_MGR.hiScore;
 	loading = false;
 	menuIndex = 0;
 	EffectGo* findEGo = (EffectGo*)FindGo("Icon");

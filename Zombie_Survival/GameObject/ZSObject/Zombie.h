@@ -33,8 +33,8 @@ protected:
 	int hp = 0;
 	int damage = 0;
 	float attackRate = 0.f;
-	
 	float attackTimer = 0.f;
+	float crawlDash = 0.f;
 
 	Player* player = nullptr;
 	SoundGo* hitedSound = nullptr;

@@ -17,15 +17,16 @@ protected:
 	SceneId currentSceneId = SceneId::None;
 	Scene* currentScene = nullptr;
 
-	SceneId startSceneId = SceneId::Title;
+	SceneId startSceneId = SceneId::Game;
 
 	float timer = 0.f;
 	bool timeFlip = false;
 
-	SoundGo bgm;
-	bool bgmPlay = false;
+	
 
 public:
+	int hiScore = 0;
+
 	void ChangeScene(SceneId id);
 
 	void Init();
@@ -35,10 +36,10 @@ public:
 	void Draw(sf::RenderWindow& window);
 	float TimerTime() const;
 	bool TimeBaseFliper() const;
-	void BgmOn();
-	void BgmOff();
 
 	Scene* GetCurrScene()const;
+
+	void SaveLoad();
 };
 
 #define SCENE_MGR (SceneMgr::Instance())

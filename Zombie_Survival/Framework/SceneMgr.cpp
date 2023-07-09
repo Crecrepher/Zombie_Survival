@@ -35,6 +35,8 @@ void SceneMgr::Init()
 	currentSceneId = startSceneId;
 	currentScene = scenes[(int)currentSceneId];
 	currentScene->Enter();
+
+	SaveLoad();
 }
 
 void SceneMgr::Release()
@@ -81,17 +83,22 @@ bool SceneMgr::TimeBaseFliper() const
 	return timeFlip;
 }
 
-void SceneMgr::BgmOn()
-{
-	bgmPlay = true;
-}
 
-void SceneMgr::BgmOff()
-{
-	bgm.sound.stop();
-}
 
 Scene* SceneMgr::GetCurrScene() const
 {
 	return currentScene;
+}
+
+void SceneMgr::SaveLoad()
+{
+	int data;
+	std::ifstream is{ "ZSsave.dat", std::ofstream::binary };
+	if (is.fail()) {
+		std::cout << "세이브 파일이 없습니다" << std::endl;
+		return;
+	}
+	is.read((char*)&data, sizeof(int));
+	hiScore = data;
+	return;
 }

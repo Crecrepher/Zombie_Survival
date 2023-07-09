@@ -10,6 +10,8 @@ protected:
 	sf::Vector2f direction;
 	sf::Vector2f look;
 	
+	bool bloaterBonk = false;
+	sf::Vector2f bonkDir = {0.f,0.f};
 	float invincibility = 0;
 
 	sf::FloatRect wallBounds;
@@ -21,11 +23,12 @@ protected:
 
 	std::vector<Gun*> gunArray;
 	int currentGunIndex = 0;
+
 	SoundGo* hitedSound = nullptr;
 
 public:
-
 	float speed;
+
 	Player(const std::string id = "",const std::string n = "");
 
 	virtual void SetPosition(float x, float y)override;
@@ -46,13 +49,14 @@ public:
 	bool isAlive = false;
 
 	void OnHitted(int damdge);
+	void OnHittedByBloat(sf::Vector2f bonkDir);
 	void OnDie();
-
 
 	void AddGun(Gun::Types type);
 	const float GetReloadTimer() const;
 	const ReloadStatus GetReloadStatus() const;
 	std::stringstream GetAmmoInfo();
+	int GetCurrentGun() const { return currentGunIndex; }
 
 	void SetReloadStatus(ReloadStatus status);
 	void SetGunSound(SoundGo* shootSound, SoundGo* shootFailSound, SoundGo* reloadSound);

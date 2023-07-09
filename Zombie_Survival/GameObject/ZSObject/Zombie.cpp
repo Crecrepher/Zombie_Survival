@@ -58,8 +58,13 @@ void Zombie::Update(float dt)
 
 	look = direction = Utils::Normalize(player->GetPosition() - position);
 	sprite.setRotation(Utils::Angle(look));
-
-	if (distance >25.f)
+	if (crawlDash > 0.f)
+	{
+		crawlDash -= dt;
+		position += direction * crawlDash*1000.f * dt;
+		SetPosition(position);
+	}
+	else if (distance >25.f)
 	{
 		position += direction * speed * dt;
 		SetPosition(position);
@@ -70,8 +75,16 @@ void Zombie::Update(float dt)
 		if (player->isAlive && sprite.getGlobalBounds().intersects(player->sprite.getGlobalBounds()))
 		{
 			player->OnHitted(damage);
-			attackTimer = 0.f;
+			attackTimer = 0.f; 
+			if (zombieType == Types::Bloater)
+			{
+				player->OnHittedByBloat(Utils::Normalize(player->GetPosition()- GetPosition()));
+			}
 		}
+	}
+	if (zombieType == Types::Chaser)
+	{
+		speed += dt;
 	}
 }
 
@@ -114,5 +127,9 @@ void Zombie::OnHitBullet(int damage)
 		{
 			sceneGame->OnDieZombie(this);
 		}
+	}
+	if (zombieType == Types::Crawler)
+	{
+		crawlDash = 0.5;
 	}
 }

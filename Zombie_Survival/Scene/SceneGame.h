@@ -69,6 +69,8 @@ public:
 	void TestCode();
 	void FrameOut(float dt);
 	void UiUpdate();
+
+	void SaveBestSco();
 };
 
 template<typename T>

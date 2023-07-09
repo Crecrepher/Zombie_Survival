@@ -30,6 +30,9 @@ itemHealth(nullptr), itemAmmo(nullptr)
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/ammo_icon.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/ammo_pickup.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/health_pickup.png"));
+	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/pistol.png"));
+	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/mg.png"));
+	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/change.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/hit.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/pickup.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/splat.wav"));
@@ -41,6 +44,7 @@ itemHealth(nullptr), itemAmmo(nullptr)
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/shoot.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/reload.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/reload_failed.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/swap.wav"));
 }
 
 SceneGame::~SceneGame()
@@ -84,6 +88,9 @@ void SceneGame::Init()
 	AddGo(new TextGo("GameOver"));
 	AddGo(new SpriteGo("graphics/ammo_icon.png","AmmoIcon"));
 	AddGo(new SpriteGo("graphics/background.png", "ShopBack"));
+	AddGo(new SpriteGo("graphics/pistol.png", "Pistol"));
+	AddGo(new SpriteGo("graphics/mg.png", "Mg"));
+	AddGo(new SpriteGo("graphics/change.png", "Change"));
 	AddGo(new SoundGo("sound/hit.wav","BulletToZombieHit"));
 	AddGo(new SoundGo("sound/pickup.wav","ItemGet"));
 	AddGo(new SoundGo("sound/splat.wav","ItemDrop"));
@@ -96,6 +103,7 @@ void SceneGame::Init()
 	AddGo(new SoundGo("sound/shoot.wav", "SShoot"));
 	AddGo(new SoundGo("sound/reload.wav", "SReload"));
 	AddGo(new SoundGo("sound/reload_failed.wav", "SReloadFail"));
+	AddGo(new SoundGo("sound/swap.wav", "Swap"));
 
 	for (auto go : gameObjects)
 	{
@@ -150,7 +158,7 @@ void SceneGame::Release()
 void SceneGame::Enter()
 {
 	Scene::Enter();
-
+	hiScore = SCENE_MGR.hiScore;
 	score = 0;
 	wave = 0;
 	pause = true;
@@ -229,6 +237,25 @@ void SceneGame::Enter()
 	findSGo->sprite.setColor(sf::Color(255,255,255,0));
 	findSGo->sortLayer = 101;
 
+	findSGo = (SpriteGo*)FindGo("Pistol");
+	findSGo->SetOrigin(Origins::MC);
+	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2, 40);
+	findSGo->SetSize(0.5f, 0.5f);
+	findSGo->sortLayer = 100;
+
+	findSGo = (SpriteGo*)FindGo("Mg");
+	findSGo->SetOrigin(Origins::MC);
+	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2, 40);
+	findSGo->SetSize(0.5f, 0.5f);
+	findSGo->sortLayer = 100;
+	findSGo->SetActive(false);
+
+	findSGo = (SpriteGo*)FindGo("Change");
+	findSGo->SetOrigin(Origins::MC);
+	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2, 80);
+	findSGo->SetSize(1.5f, 1.5f);
+	findSGo->sortLayer = 100;
+
 	findTGo = (TextGo*)FindGo("Shop");
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
 	findTGo->text.setString("\n\n1- INCREASED RATE OF FIRE\n2- INCREASED CLIP SIZE 2\n3- INCREASED MAX HEALTH\n4- INCREASED RUN SPEED\n5- MORE AND BETTER HEALTH PICKUPS\n6- MORE AND BETTER AMMO PICKUPS");
@@ -245,6 +272,7 @@ void SceneGame::Enter()
 	Utils::SetOrigin(findTGo->text, Origins::TL);
 	findTGo->text.setPosition(100.f, 100.f);
 	findTGo->sortLayer = 103;
+	findTGo->SetActive(false);
 
 	findTGo = (TextGo*)FindGo("GameOver");
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/zombiecontrol.ttf"));
@@ -463,7 +491,11 @@ void SceneGame::OnDiePlayer()
 	FSound->sound.stop();
 	TextGo* findTGo = (TextGo*)FindGo("GameOver");
 	findTGo->SetActive(true);
-
+	if (SCENE_MGR.hiScore < hiScore)
+	{
+		SaveBestSco();
+	}
+	
 }
 
 const std::list<Zombie*>* SceneGame::GetZombieList() const
@@ -589,6 +621,28 @@ void SceneGame::UiUpdate()
 
 		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Tab))
 		{
+			SoundGo* swap = (SoundGo*)FindGo("Swap");
+			swap->Play();
+			int guntype = player->GetCurrentGun();
+			switch (guntype)
+			{
+			case 0:
+			{
+				SpriteGo* gun = (SpriteGo*)FindGo("Pistol");
+				gun->SetActive(true);
+				gun = (SpriteGo*)FindGo("Mg");
+				gun->SetActive(false);
+				break;
+			}
+			case 1:
+			{
+				SpriteGo* gun = (SpriteGo*)FindGo("Mg");
+				gun->SetActive(true);
+				gun = (SpriteGo*)FindGo("Pistol");
+				gun->SetActive(false);
+				break;
+			}
+			}
 			RectGo* reload = (RectGo*)FindGo("Reload");
 			reload->SetActive(false);
 		}
@@ -600,6 +654,23 @@ void SceneGame::UiUpdate()
 		}
 
 	}
+}
+
+void SceneGame::SaveBestSco()
+{
+	std::ofstream outputFile("ZSsave.dat", std::ios::binary | std::ios::out);
+
+	if (!outputFile)
+	{
+		std::cout << "세이브 생성 오류" << std::endl;
+		return;
+	}
+	outputFile.write((char*)&hiScore, sizeof(hiScore));
+
+	outputFile.close();
+
+	std::cout << "최고점수가 저장되었습니다." << std::endl;
+	SCENE_MGR.hiScore = hiScore;
 }
 
 void SceneGame::WaveEnd()

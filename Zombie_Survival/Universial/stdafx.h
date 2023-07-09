@@ -11,6 +11,8 @@
 #include <tuple>
 #include <math.h>
 #include <functional>
+#include <iostream>
+#include <fstream>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
