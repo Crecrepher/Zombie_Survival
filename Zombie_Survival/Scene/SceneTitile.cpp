@@ -11,9 +11,11 @@
 
 #include "DataTableMgr.h"
 #include "StringTable.h"
+
 SceneTitile::SceneTitile() : Scene(SceneId::Title)
 {
 	resources.push_back(std::make_tuple(ResourceTypes::Font, "fonts/neodgm.ttf"));
+	resources.push_back(std::make_tuple(ResourceTypes::Font, "fonts/PixelMplus12-Regular.ttf"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/win.wav"));
 }
 
@@ -74,13 +76,14 @@ void SceneTitile::Enter()
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/neodgm.ttf"));
 
 	auto stringtable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
-	std::string a = stringtable->Get("TITLE");
-	findTGo->text.setString(a/*L"엔터로 시작"*/);
+	std::wstring unicode = L"";
+	stringtable->convert_ansi_to_unicode_string(unicode, stringtable->Get("TITLE").c_str(), stringtable->Get("TITLE").size());
+	findTGo->text.setString(unicode.c_str());
 
-	findTGo->text.setCharacterSize(125);
+	findTGo->text.setCharacterSize(75);
 	findTGo->text.setFillColor(sf::Color::White);
 	Utils::SetOrigin(findTGo->text, Origins::MC);
-	findTGo->text.setPosition(FRAMEWORK.GetWindowSize().x * 0.5f, FRAMEWORK.GetWindowSize().y * 0.7f);
+	findTGo->text.setPosition(FRAMEWORK.GetWindowSize().x * 0.5f, FRAMEWORK.GetWindowSize().y * 0.8f);
 	findTGo->sortLayer = 1;
 
 	SoundGo* sou = (SoundGo*)FindGo("Start");
@@ -107,10 +110,20 @@ void SceneTitile::Update(float dt)
 	}
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::L))
 	{
+		if (Variables::CurrntLang == Languages::JP)
+		{
+			findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/PixelMplus12-Regular.ttf"));
+		}
+		else
+		{
+			findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/neodgm.ttf"));
+		}
 		auto stringtable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
-		std::string a = stringtable->Get("TITLE");
-		findTGo->text.setString(a/*L"엔터로 시작"*/);
+		std::wstring unicode = L"";
+		stringtable->convert_ansi_to_unicode_string(unicode, stringtable->Get("TITLE").c_str(), stringtable->Get("TITLE").size());
+		findTGo->text.setString(unicode.c_str()/*L"엔터로 시작"*/);
 		Utils::SetOrigin(findTGo->text, Origins::MC);
+		
 	}
 }
 

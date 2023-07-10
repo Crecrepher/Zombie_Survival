@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "StringTable.h"
 #include "rapidcsv.h"
+#include <sstream>
+#include <string>
+#include <iostream>
 
 bool StringTable::Load()
 {
@@ -43,22 +46,59 @@ const std::string& StringTable::Get(const std::string& id, Languages lang) const
 		std::cout << "ERR: Undefined" << std::endl;
 		return "ERR: Undefined";
 	}
-
 	return find->second;
 }
 
-std::wstring& StringTable::GetW(const std::string& id, Languages lang) const
-{
-	auto& table = tables[(int)lang];
+DWORD StringTable::convert_ansi_to_unicode_string(
+	__out std::wstring& unicode,
+	__in const char* ansi,
+	__in const size_t ansi_size
+) {
 
-	auto find = table.find(id);
-	if (find == table.end())
-	{
-		std::cout << "ERR: Undefined" << std::endl;
-		std::wstring errors = L"ERR: Undefined";
-		return errors;
-	}
-	std::cout << find->second << std::endl;
-	std::wstring wstr(find->second.begin(), find->second.end()); // std::string을 std::wstring으로 변환
-	return wstr;
+	DWORD error = 0;
+
+	do {
+
+		if ((nullptr == ansi) || (0 == ansi_size)) {
+			error = ERROR_INVALID_PARAMETER;
+			break;
+		}
+
+		unicode.clear();
+
+		//
+		// getting required cch.
+		//
+
+		int required_cch = ::MultiByteToWideChar(
+			CP_ACP,
+			0,
+			ansi, static_cast<int>(ansi_size),
+			nullptr, 0
+		);
+
+		if (0 == required_cch) {
+			error = ::GetLastError();
+			break;
+		}
+
+		unicode.resize(required_cch);
+
+		//
+		// convert.
+		//
+
+		if (0 == ::MultiByteToWideChar(
+			CP_ACP,
+			0,
+			ansi, static_cast<int>(ansi_size),
+			const_cast<wchar_t*>(unicode.c_str()), static_cast<int>(unicode.size())
+		)) {
+			error = ::GetLastError();
+			break;
+		}
+
+	} while (false);
+
+	return error;
 }

@@ -13,11 +13,7 @@ public:
 	virtual void Release() override;
 
 	const std::string& Get(const std::string& id, Languages lang)const;
-	std::wstring& GetW(const std::string& id, Languages lang)const;
-	std::wstring& GetW(const std::string& id)const
-	{
-		return GetW(id, Variables::CurrntLang);
-	}
+	DWORD convert_ansi_to_unicode_string(std::wstring& unicode, const char* ansi, const size_t ansi_size);
 	const std::string& Get(const std::string& id)const
 	{
 		return Get(id, Variables::CurrntLang);

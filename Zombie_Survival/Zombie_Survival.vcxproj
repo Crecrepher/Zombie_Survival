@@ -152,6 +152,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConvertSolution.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="DataTable\DataTable.cpp" />
     <ClCompile Include="Framework\DataTableMgr.cpp" />
     <ClCompile Include="GameObject\ZSObject\Bullet.cpp" />
