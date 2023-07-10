@@ -163,7 +163,14 @@ void Gun::SetSound(SoundGo* shootSound, SoundGo* shootFailSound, SoundGo* reload
 
 void Gun::UpgradeFire()
 {
-	fireRate = std::max(fireRate - 0.02f, 0.05f);
+	if (gunType ==Types::PISTOL)
+	{
+		fireRate = std::max(fireRate - 0.02f, 0.05f);
+	}
+	else
+	{
+		fireRate = std::max(fireRate - 0.01f, 0.f);
+	}
 }
 
 void Gun::UpgradeClip()

@@ -35,7 +35,7 @@ void Item::Update(float dt)
 			player->ItemHealEat(ability);
 			break;
 		case Item::Types::Ammo:
-			player->ItemAmmoEat(10+ability*2);
+			player->ItemAmmoEat(20+ability*2);
 			SceneGame* sceneGame = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrScene());
 			if (sceneGame != nullptr)
 			{
