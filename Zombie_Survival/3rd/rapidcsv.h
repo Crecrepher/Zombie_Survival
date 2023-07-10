@@ -13,6 +13,8 @@
 
 #pragma once
 
+//#define HAS_CODECVT
+
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -30,6 +32,7 @@
 #include <string>
 #include <typeinfo>
 #include <vector>
+
 
 namespace rapidcsv
 {

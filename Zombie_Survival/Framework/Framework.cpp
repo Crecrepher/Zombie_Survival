@@ -40,7 +40,6 @@ void Framework::Release()
 
 void Framework::Update(float dt)
 {
-
     SCENE_MGR.Update(dt);
 }
 

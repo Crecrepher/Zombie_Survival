@@ -9,6 +9,7 @@
 #include "ResourceMgr.h"
 #include "DataTableMgr.h"
 #include "StringTable.h"
+#include "InputMgr.h"
 void SceneMgr::ChangeScene(SceneId id)
 {
 	currentScene->Exit();
@@ -64,6 +65,10 @@ void SceneMgr::Update(float dt)
 	{
 		timeFlip = !timeFlip;
 		timer = 0.f;
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::L))
+	{
+		Variables::CurrntLang = (Languages)(((int)Variables::CurrntLang + 1) % 3);
 	}
 	currentScene->Update(dt);
 }

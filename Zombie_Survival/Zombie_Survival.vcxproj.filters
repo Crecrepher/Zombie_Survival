@@ -96,16 +96,16 @@
     <ClCompile Include="GameObject\ZSObject\Item.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="DataTable.cpp">
+    <ClCompile Include="DataTable\DataTable.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="DataTableMgr.cpp">
+    <ClCompile Include="Framework\DataTableMgr.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="StringTable.cpp">
+    <ClCompile Include="DataTable\StringTable.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ZombieTable.cpp">
+    <ClCompile Include="DataTable\ZombieTable.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -197,16 +197,16 @@
     <ClInclude Include="3rd\rapidcsv.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="DataTable.h">
+    <ClInclude Include="DataTable\DataTable.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="DataTableMgr.h">
+    <ClInclude Include="Framework\DataTableMgr.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="StringTable.h">
+    <ClInclude Include="DataTable\StringTable.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ZombieTable.h">
+    <ClInclude Include="DataTable\ZombieTable.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

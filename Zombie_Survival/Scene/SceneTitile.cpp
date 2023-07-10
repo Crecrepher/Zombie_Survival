@@ -73,9 +73,9 @@ void SceneTitile::Enter()
 	TextGo* findTGo = (TextGo*)FindGo("Text");
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/neodgm.ttf"));
 
-	//auto stringtable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
-	//std::string a = stringtable->Get("TITLE");
-	findTGo->text.setString(L"엔터로 시작");
+	auto stringtable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
+	std::string a = stringtable->Get("TITLE");
+	findTGo->text.setString(a/*L"엔터로 시작"*/);
 
 	findTGo->text.setCharacterSize(125);
 	findTGo->text.setFillColor(sf::Color::White);
@@ -104,6 +104,13 @@ void SceneTitile::Update(float dt)
 		SoundGo* sound = (SoundGo*)FindGo("MoveSound");
 		sound->sound.play();
 		SCENE_MGR.ChangeScene(SceneId::Menu);
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::L))
+	{
+		auto stringtable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
+		std::string a = stringtable->Get("TITLE");
+		findTGo->text.setString(a/*L"엔터로 시작"*/);
+		Utils::SetOrigin(findTGo->text, Origins::MC);
 	}
 }
 
