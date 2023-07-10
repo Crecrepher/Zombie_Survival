@@ -7,7 +7,7 @@
 #include "ResourceMgr.h"
 #include "SoundGo.h"
 
-
+//특징별 성능을 블록처리하듯 모듈러 가능한 디자인을 하기
 const std::string Zombie::textureIds[3] = {
 		"graphics/bloater.png",
 		"graphics/chaser.png",
@@ -58,6 +58,7 @@ void Zombie::Update(float dt)
 
 	look = direction = Utils::Normalize(player->GetPosition() - position);
 	sprite.setRotation(Utils::Angle(look));
+
 	if (crawlDash > 0.f)
 	{
 		crawlDash -= dt;

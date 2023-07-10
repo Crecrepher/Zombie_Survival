@@ -241,6 +241,7 @@ void SceneGame::Enter()
 	findSGo->SetOrigin(Origins::MC);
 	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2, 40);
 	findSGo->SetSize(0.5f, 0.5f);
+	findSGo->SetActive(true);
 	findSGo->sortLayer = 100;
 
 	findSGo = (SpriteGo*)FindGo("Mg");
@@ -286,6 +287,7 @@ void SceneGame::Enter()
 
 	SoundGo* bgm = (SoundGo*)FindGo("Bgm");
 	bgm->sound.setLoop(true);
+
 }
 
 void SceneGame::Exit()
@@ -352,7 +354,7 @@ void SceneGame::Update(float dt)
 	//UI 업데이트 관련
 	FrameOut(dt);
 	UiUpdate();
-	//TestCode();
+	/*TestCode();*/
 	//1 for spawn, 2 for next wave
 }
 
@@ -697,7 +699,7 @@ void SceneGame::WaveEnd()
 
 void SceneGame::ShopOff(float dt)
 {
-	padeIn -= dt * 300;
+	padeIn = std::max(padeIn-dt * 300,0.f);
 	SoundGo* findSound = (SoundGo*)FindGo("Bgm");
 	findSound->sound.setVolume(100);
 	SpriteGo* findSGo = (SpriteGo*)FindGo("ShopBack");

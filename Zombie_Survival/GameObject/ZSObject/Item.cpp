@@ -70,7 +70,7 @@ void Item::SetType(Types type)
 
 void Item::TryMake(sf::Vector2f pos)
 {
-	if (Utils::RandomRange(luck, 1.f)>= 0.95f)
+	if (Utils::RandomRange(luck, 1.f)>= 0.90f)
 	{
 		dropSound->sound.play();
 		SetPosition(pos);

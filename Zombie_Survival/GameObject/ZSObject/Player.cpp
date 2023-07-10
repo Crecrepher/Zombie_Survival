@@ -43,7 +43,7 @@ void Player::Reset()
 	hp = maxHp;
 	isAlive = true;
 	speed = 100.f;
-
+	currentGunIndex = 0;
 	for (auto gun : gunArray)
 	{
 		gun->Reset();
@@ -82,6 +82,7 @@ void Player::Update(float dt)
 		direction /= magnitude;
 	}
 
+	//
 	if (bloaterBonk)
 	{
 		position += bonkDir * invincibility *5000.f * dt;
