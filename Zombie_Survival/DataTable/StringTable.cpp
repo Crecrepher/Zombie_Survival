@@ -49,6 +49,14 @@ const std::string& StringTable::Get(const std::string& id, Languages lang) const
 	return find->second;
 }
 
+const std::wstring StringTable::GetW(const std::string& id, Languages lang)
+{
+	std::string getString = Get(id, lang);
+	std::wstring unicode = L"";
+	convert_ansi_to_unicode_string(unicode, getString.c_str(), getString.size());
+	return unicode.c_str();
+}
+
 DWORD StringTable::convert_ansi_to_unicode_string(
 	__out std::wstring& unicode,
 	__in const char* ansi,
@@ -66,9 +74,7 @@ DWORD StringTable::convert_ansi_to_unicode_string(
 
 		unicode.clear();
 
-		//
-		// getting required cch.
-		//
+		// 문자열 세기
 
 		int required_cch = ::MultiByteToWideChar(
 			CP_ACP,
@@ -84,9 +90,7 @@ DWORD StringTable::convert_ansi_to_unicode_string(
 
 		unicode.resize(required_cch);
 
-		//
-		// convert.
-		//
+		// 변환
 
 		if (0 == ::MultiByteToWideChar(
 			CP_ACP,

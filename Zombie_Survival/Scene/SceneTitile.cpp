@@ -76,9 +76,7 @@ void SceneTitile::Enter()
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/neodgm.ttf"));
 
 	auto stringtable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
-	std::wstring unicode = L"";
-	stringtable->convert_ansi_to_unicode_string(unicode, stringtable->Get("TITLE").c_str(), stringtable->Get("TITLE").size());
-	findTGo->text.setString(unicode.c_str());
+	findTGo->text.setString(stringtable->GetW("TITLE"));
 
 	findTGo->text.setCharacterSize(75);
 	findTGo->text.setFillColor(sf::Color::White);
@@ -121,7 +119,7 @@ void SceneTitile::Update(float dt)
 		auto stringtable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
 		std::wstring unicode = L"";
 		stringtable->convert_ansi_to_unicode_string(unicode, stringtable->Get("TITLE").c_str(), stringtable->Get("TITLE").size());
-		findTGo->text.setString(unicode.c_str()/*L"엔터로 시작"*/);
+		findTGo->text.setString(unicode.c_str());
 		Utils::SetOrigin(findTGo->text, Origins::MC);
 		
 	}
