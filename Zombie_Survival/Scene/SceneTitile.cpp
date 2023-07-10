@@ -7,7 +7,10 @@
 #include "TextGo.h"
 #include "SoundGo.h"
 #include "Framework.h"
+#include <atlstr.h>
 
+#include "DataTableMgr.h"
+#include "StringTable.h"
 SceneTitile::SceneTitile() : Scene(SceneId::Title)
 {
 	resources.push_back(std::make_tuple(ResourceTypes::Font, "fonts/neodgm.ttf"));
@@ -69,7 +72,11 @@ void SceneTitile::Enter()
 
 	TextGo* findTGo = (TextGo*)FindGo("Text");
 	findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/neodgm.ttf"));
-	findTGo->text.setString("PRESS ENTER");
+
+	//auto stringtable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
+	//std::string a = stringtable->Get("TITLE");
+	findTGo->text.setString(L"엔터로 시작");
+
 	findTGo->text.setCharacterSize(125);
 	findTGo->text.setFillColor(sf::Color::White);
 	Utils::SetOrigin(findTGo->text, Origins::MC);

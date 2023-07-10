@@ -4,6 +4,7 @@
 #include "SceneMgr.h"
 #include "Scene.h"
 #include "ResourceMgr.h"
+#include "DataTableMgr.h"
 
 Framework::Framework(int w, int h, const std::string& t)
     :screenWidth(w), screenHeight(h), title(t)
@@ -14,6 +15,7 @@ void Framework::Init(int width, int height, const std::string& title)
 {
 	window.create(sf::VideoMode(width, height), title);
 
+    DATATABLE_MGR.LoadAll();
     //傈开府家胶 何福扁
     RESOURCE_MGR.Load(ResourceTypes::Texture, "graphics/icon.png");
     RESOURCE_MGR.Load(ResourceTypes::Texture, "graphics/background.png");
@@ -26,6 +28,7 @@ void Framework::Init(int width, int height, const std::string& title)
 
 void Framework::Release()
 {
+    DATATABLE_MGR.ReleaseAll();
     //傈开府家胶 秦力
     RESOURCE_MGR.UnLoad(ResourceTypes::Texture, "graphics/icon.png");
     RESOURCE_MGR.UnLoad(ResourceTypes::Texture, "graphics/background.png");

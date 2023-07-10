@@ -7,7 +7,8 @@
 #include "SceneGame.h"
 
 #include "ResourceMgr.h"
-
+#include "DataTableMgr.h"
+#include "StringTable.h"
 void SceneMgr::ChangeScene(SceneId id)
 {
 	currentScene->Exit();

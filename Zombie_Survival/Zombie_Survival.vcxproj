@@ -120,7 +120,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./SFML-2.5.1/include;./GameObject/ZSObject;./GameObject;./Universial;./Framework;./Scene;./;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./SFML-2.5.1/include;./GameObject/ZSObject;./GameObject;./Universial;./Framework;./Scene;./;./3rd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
@@ -152,6 +152,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataTable.cpp" />
+    <ClCompile Include="DataTableMgr.cpp" />
     <ClCompile Include="GameObject\ZSObject\Bullet.cpp" />
     <ClCompile Include="GameObject\EffectGo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -172,6 +174,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GameObject\SpriteEffect.cpp" />
+    <ClCompile Include="StringTable.cpp" />
     <ClCompile Include="Universial\ErrorPrinter.cpp" />
     <ClCompile Include="Framework\Framework.cpp" />
     <ClCompile Include="Framework\InputMgr.cpp" />
@@ -194,11 +197,16 @@
     <ClCompile Include="Universial\Variables.cpp" />
     <ClCompile Include="GameObject\VertexArrayGo.cpp" />
     <ClCompile Include="GameObject\ZSObject\Zombie.cpp" />
+    <ClCompile Include="ZombieTable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3rd\rapidcsv.h" />
+    <ClInclude Include="DataTable.h" />
+    <ClInclude Include="DataTableMgr.h" />
     <ClInclude Include="GameObject\SpriteEffect.h" />
     <ClInclude Include="GameObject\ZSObject\Gun.h" />
     <ClInclude Include="GameObject\ZSObject\Item.h" />
+    <ClInclude Include="StringTable.h" />
     <ClInclude Include="Universial\ObjectPool.h" />
     <ClInclude Include="GameObject\ZSObject\Bullet.h" />
     <ClInclude Include="GameObject\EffectGo.h" />
@@ -228,6 +236,7 @@
     <ClInclude Include="Universial\Variables.h" />
     <ClInclude Include="GameObject\VertexArrayGo.h" />
     <ClInclude Include="GameObject\ZSObject\Zombie.h" />
+    <ClInclude Include="ZombieTable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

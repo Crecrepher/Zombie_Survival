@@ -6,18 +6,20 @@
 #include "SceneGame.h"
 #include "ResourceMgr.h"
 #include "SoundGo.h"
+#include "DataTableMgr.h"
+#include "ZombieTable.h"
 
 //특징별 성능을 블록처리하듯 모듈러 가능한 디자인을 하기
-const std::string Zombie::textureIds[3] = {
-		"graphics/bloater.png",
-		"graphics/chaser.png",
-		"graphics/crawler.png"
-};
-
-const float Zombie::speedStats[3] = { 40.f,70.f,20.f };
-const int Zombie::hpStats[3] = { 100,75,50 };
-const int Zombie::damageStats[3] = { 10,5,7 };
-const float Zombie::attackRateStats[3] = { 2.f,0.5f,1.f };
+//const std::string Zombie::textureIds[3] = {
+//		"graphics/bloater.png",
+//		"graphics/chaser.png",
+//		"graphics/crawler.png"
+//};
+//
+//const float Zombie::speedStats[3] = { 40.f,70.f,20.f };
+//const int Zombie::hpStats[3] = { 100,75,50 };
+//const int Zombie::damageStats[3] = { 10,5,7 };
+//const float Zombie::attackRateStats[3] = { 2.f,0.5f,1.f };
 
 Zombie::Zombie(const std::string n)
 	:SpriteGo("", n)
@@ -97,13 +99,18 @@ void Zombie::Draw(sf::RenderWindow& window)
 void Zombie::SetType(Types t)
 {
 	zombieType = t;
-	int index = (int)zombieType;
 
-	textureId = textureIds[index];
-	speed =speedStats[index];
-	maxHp = hpStats[index];
-	damage = damageStats[index];
-	attackRate = attackRateStats[index];
+	const ZombieInfo& info = DATATABLE_MGR.Get<ZombieTable>(DataTable::Ids::Zombie)->Get(t);
+
+	int index = (int)zombieType;
+	textureId = info.textureId;
+	//..
+
+	//textureId = textureIds[index];
+	//speed =speedStats[index];
+	//maxHp = hpStats[index];
+	//damage = damageStats[index];
+	//attackRate = attackRateStats[index];
 }
 
 Zombie::Types Zombie::GetType() const

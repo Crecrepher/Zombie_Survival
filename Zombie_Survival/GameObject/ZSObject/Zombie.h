@@ -16,12 +16,13 @@ public:
 	};
 
 	static const int TotalTypes = 3;
-	static const std::string textureIds[3];
-	static const float speedStats[3];
-	static const int hpStats[3];
-	static const int damageStats[3];
-	static const float attackRateStats[3];
-
+	/// 
+	//static const std::string textureIds[3];
+	//static const float speedStats[3];
+	//static const int hpStats[3];
+	//static const int damageStats[3];
+	//static const float attackRateStats[3];
+	///
 protected:
 	Types zombieType;
 
