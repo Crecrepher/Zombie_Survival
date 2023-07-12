@@ -12,11 +12,12 @@
 SceneMenu::SceneMenu() : Scene(SceneId::Menu), 
 menuIndex(0), closeTimer(0.f), isClose(false), loading(false)
 {
-	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/b1.png"));
+	resourceListPath = "tables/MenuResourceList.csv";
+	/*resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/b1.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/b2.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/b3.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/chop.wav"));
-	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/death.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/death.wav"));*/
 }
 
 SceneMenu::~SceneMenu()
@@ -62,6 +63,7 @@ void SceneMenu::Release()
 void SceneMenu::Enter()
 {
 	Scene::Enter();
+	RESOURCE_MGR.LoadFromCsv("tables/MenuResourceList.csv");
 	hiScore = SCENE_MGR.hiScore;
 	loading = false;
 	menuIndex = 0;

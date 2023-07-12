@@ -11,12 +11,12 @@
 
 #include "DataTableMgr.h"
 #include "StringTable.h"
+#include "UiButton.h"
+#include "Player2.h"
 
 SceneTitile::SceneTitile() : Scene(SceneId::Title)
 {
-	resources.push_back(std::make_tuple(ResourceTypes::Font, "fonts/neodgm.ttf"));
-	resources.push_back(std::make_tuple(ResourceTypes::Font, "fonts/PixelMplus12-Regular.ttf"));
-	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/win.wav"));
+	resourceListPath = "tables/TitleResourceList.csv";
 }
 
 SceneTitile::~SceneTitile()
@@ -41,7 +41,8 @@ void SceneTitile::Init()
 	AddGo(new TextGo("Text"));
 	AddGo(new SoundGo("sound/win.wav","Start"));
 	AddGo(new SoundGo("sound/select.wav","MoveSound"));
-
+	AddGo(new UiButton("graphics/button.png", "Button"));
+	player = (Player2*)AddGo(new Player2());
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -61,6 +62,24 @@ void SceneTitile::Release()
 void SceneTitile::Enter()
 {
 	Scene::Enter();
+	RESOURCE_MGR.LoadFromCsv("tables/TitleResourceList.csv");
+	UiButton* ui = (UiButton*)FindGo("Button");
+	ui->SetOrigin(Origins::TR);
+	ui->SetSize(FRAMEWORK.GetWindowSize().x / 1920.f, FRAMEWORK.GetWindowSize().y / 1080.f);
+	ui->SetPosition(FRAMEWORK.GetWindowSize().x, 0);
+	ui->sortLayer = 100;
+	ui->OnEnter = [ui]() {
+		sf::Texture* tex = RESOURCE_MGR.GetTexture("graphics/button2.png");
+		ui->sprite.setTexture(*tex);
+	};
+	ui->OnExit = [ui]() {
+		sf::Texture* tex = RESOURCE_MGR.GetTexture("graphics/button.png");
+		ui->sprite.setTexture(*tex);
+	};
+	ui->OnClick = []() {
+		exit(0);
+	};
+
 	SpriteGo* findSGo = (SpriteGo*)FindGo("Icon");
 	findSGo->SetOrigin(Origins::MC);
 	findSGo->SetPosition(FRAMEWORK.GetWindowSize().x / 2.f, FRAMEWORK.GetWindowSize().y / 2.5f);
@@ -117,11 +136,8 @@ void SceneTitile::Update(float dt)
 			findTGo->text.setFont(*RESOURCE_MGR.GetFont("fonts/neodgm.ttf"));
 		}
 		auto stringtable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
-		std::wstring unicode = L"";
-		stringtable->convert_ansi_to_unicode_string(unicode, stringtable->Get("TITLE").c_str(), stringtable->Get("TITLE").size());
-		findTGo->text.setString(unicode.c_str());
+		findTGo->text.setString(stringtable->GetW("TITLE"));
 		Utils::SetOrigin(findTGo->text, Origins::MC);
-		
 	}
 }
 

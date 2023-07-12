@@ -14,6 +14,7 @@
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
+#include <queue>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>

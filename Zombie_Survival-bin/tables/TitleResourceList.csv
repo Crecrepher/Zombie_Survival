@@ -1,0 +1,8 @@
+RESOURCE_TYPES 1.TEX 2.FONT 3.SOUND 4.ANI,RESOURCE_PATH
+0,graphics/button.png
+0,graphics/button2.png
+0,graphics/RubySheet.png
+0,graphics/SAND_Swom.png
+1,fonts/PixelMplus12-Regular.ttf
+1,fonts/neodgm.ttf
+2,sound/win.wav

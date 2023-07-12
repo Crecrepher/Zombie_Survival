@@ -30,6 +30,7 @@ enum class ResourceTypes
 	Texture,
 	Font,
 	Sound,
+	AnimationClip,
 };
 
 enum class Origins
@@ -48,3 +49,5 @@ enum class Origins
 
 #define SCREEN_WIDTH 1280;
 #define SCREEN_HEIGHT 720;
+
+#include "AnimatonClip.h"

@@ -2,9 +2,12 @@
 #include "Scene.h"
 #include "SpriteGo.h"
 
+class Player2;
+
 class SceneTitile : public Scene
 {
 protected:
+	Player2* player;
 public:
 	SceneTitile();
 	virtual ~SceneTitile() override;

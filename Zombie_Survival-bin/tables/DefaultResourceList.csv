@@ -1,0 +1,11 @@
+RESOURCE_TYPES 1.TEX 2.FONT 3.SOUND 4.ANI,RESOURCE_PATH
+0,graphics/icon.png
+0,graphics/background.png
+1,fonts/zombiecontrol.ttf
+2,sound/select.wav
+3,animations/ruby/Idle_Side.csv
+3,animations/ruby/Idle_Up.csv
+3,animations/ruby/Idle_Down.csv
+3,animations/ruby/Move_Side.csv
+3,animations/ruby/Move_Up.csv
+3,animations/ruby/Move_Down.csv

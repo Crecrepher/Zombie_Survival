@@ -133,3 +133,16 @@ float Utils::Angle(const sf::Vector2f& dir)
 {
 	return atan2(dir.y,dir.x)*(180.f/M_PI);
 }
+
+int Utils::FixSign(float number)
+{
+	if (number < 0.0f)
+	{
+		return -1;
+	}
+	else if (number > 0.0f)
+	{
+		return 1;
+	}
+	return 0;
+}

@@ -14,16 +14,9 @@ Framework::Framework(int w, int h, const std::string& t)
 void Framework::Init(int width, int height, const std::string& title)
 {
 	window.create(sf::VideoMode(width, height), title);
-
+    RESOURCE_MGR.Init();
     DATATABLE_MGR.LoadAll();
-    //傈开府家胶 何福扁
-    RESOURCE_MGR.Load(ResourceTypes::Texture, "graphics/icon.png");
-    RESOURCE_MGR.Load(ResourceTypes::Texture, "graphics/background.png");
-    RESOURCE_MGR.Load(ResourceTypes::Sound, "sound/select.wav");
-    RESOURCE_MGR.Load(ResourceTypes::Font, "fonts/zombiecontrol.ttf");
     SCENE_MGR.Init();
-
- 
 }
 
 void Framework::Release()
@@ -51,7 +44,6 @@ void Framework::Draw()
 void Framework::Run()
 {
     Init(screenWidth, screenHeight,title);
-
     clock.restart();
 
     sf::Image cursorImg;
@@ -101,7 +93,7 @@ void Framework::Run()
 
 sf::Vector2f Framework::GetWindowSize()
 {
-    return sf::Vector2f(screenWidth, screenHeight);
+    return sf::Vector2f((float)screenWidth, (float)screenHeight);
 }
 
 sf::RenderWindow& Framework::GetWindow()

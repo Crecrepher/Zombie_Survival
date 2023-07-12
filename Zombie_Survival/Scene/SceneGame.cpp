@@ -19,7 +19,7 @@ SceneGame::SceneGame() : Scene(SceneId::Game), player(nullptr),
 itemHealth(nullptr), itemAmmo(nullptr)
 {
 	//지역리소스 선언
-	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/player.png"));
+	/*resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/player.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/background_sheet.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/bloater.png"));
 	resources.push_back(std::make_tuple(ResourceTypes::Texture, "graphics/chaser.png"));
@@ -44,7 +44,7 @@ itemHealth(nullptr), itemAmmo(nullptr)
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/shoot.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/reload.wav"));
 	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/reload_failed.wav"));
-	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/swap.wav"));
+	resources.push_back(std::make_tuple(ResourceTypes::Sound, "sound/swap.wav"));*/
 }
 
 SceneGame::~SceneGame()

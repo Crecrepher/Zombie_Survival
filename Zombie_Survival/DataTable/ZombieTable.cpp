@@ -34,6 +34,7 @@ const ZombieInfo& ZombieTable::Get(int id)
 		std::cout << "ERR: Undefined" << std::endl;
 		return { "", 0.f, 0, 0, 0.f };
 	}
+	//예외 throw / 포인터로 넘겨주기
 
 	return find->second;
 }
